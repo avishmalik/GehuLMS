@@ -3,16 +3,16 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.hashers import make_password
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self,Ticket_No,password,**extra_fields):
-        if not Ticket_No:
-            raise ValueError(_('The Ticket No must be set'))
-        # Ticket_No = self.normalize_ticket_no(Ticket_No)
-        user = self.model(Ticket_No = Ticket_No,**extra_fields)
+    def create_user(self,email,password,**extra_fields):
+        if not email:
+            raise ValueError(_('User must have an Email Address'))
+        email = self.normalize_email(email)
+        user = self.model(email = email,**extra_fields)
         user.set_password(raw_password = password)
         user.save()
         return user
     
-    def create_superuser(self,Ticket_No,password,**extra_fields):
+    def create_superuser(self,email,password,**extra_fields):
         extra_fields.setdefault('is_staff',True)
         extra_fields.setdefault('is_superuser',True)
         extra_fields.setdefault('is_active',True)
@@ -21,5 +21,5 @@ class CustomUserManager(BaseUserManager):
             raise ValueError(_('SuperUser must have is_staff True'))
         if extra_fields.get('is_superuser') is not True:
             raise ValueError(_('SuperUser must have is_superuser True'))
-        return self.create_user(Ticket_No,password,**extra_fields)
+        return self.create_user(email,password,**extra_fields)
         

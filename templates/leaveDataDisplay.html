@@ -1,149 +1,30 @@
-{% load static %}
-
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <title>{% block title %}Leave Management System{% endblock title %}</title>
-    
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-<!--    <link rel="stylesheet" href="{% static '/bootstrap/css/bootstrap.min.css' %}"/>-->
-<!--    <script type="text/javascript" src="{% static '/bootstrap/js/bootstrap.min.js' %}"></script>-->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-          integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-          <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script type="text/javascript" src="{% static '/jquery/jquery-3.3.1.min.js' %}"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.21/af-2.3.5/b-1.6.2/b-colvis-1.6.2/b-html5-1.6.2/b-print-1.6.2/cr-1.5.2/fc-3.3.1/fh-3.1.7/kt-2.5.2/r-2.2.5/rg-1.1.2/rr-1.2.7/sp-1.1.1/sl-1.3.1/datatables.min.css"/>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.21/af-2.3.5/b-1.6.2/b-colvis-1.6.2/b-html5-1.6.2/b-print-1.6.2/cr-1.5.2/fc-3.3.1/fh-3.1.7/kt-2.5.2/r-2.2.5/rg-1.1.2/rr-1.2.7/sp-1.1.1/sl-1.3.1/datatables.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0/chartjs-plugin-datalabels.min.js" integrity="sha512-R/QOHLpV1Ggq22vfDAWYOaMd5RopHrJNMxi8/lJu8Oihwi4Ho4BRFeiMiCefn9rasajKjnx9/fTQ/xkWnkDACg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/1.0.2/chartjs-plugin-annotation.min.js" integrity="sha512-FuXN8O36qmtA+vRJyRoAxPcThh/1KJJp7WSRnjCpqA+13HYGrSWiyzrCHalCWi42L5qH1jt88lX5wy5JyFxhfQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<!--    <script-->
-<!--            src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/0.5.7/chartjs-plugin-annotation.js"></script>-->
-    {% block stylesheet %}{% endblock stylesheet %}
+
+  <meta charset="utf-8" />
+  <link rel="apple-touch-icon" sizes="76x76" href="/static/assets/img/apple-icon.png">
+  <link rel="icon" type="image/png" href="/static/assets/img/favicon.png">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+  <title>
+    Django Material Dashboard - {% block title %}{% endblock %} | AppSeed
+  </title>
+
+  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
+  <!--     Fonts and icons     -->
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+  <!-- CSS Files -->
+  <link href="/static/assets/css/material-dashboard.css?v=2.1.2" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!-- Specific Page CSS goes HERE  -->
+  {% block stylesheets %}{% endblock stylesheets %}
+
 </head>
 
-<body style="background-color:black">
-
-    <style>
-        table.scrolldown tbody {
-
-            height: 100%;
-
-            /* Set vertical scroll */
-            overflow-y: auto;
-
-            /* Hide the horizontal scroll */
-            overflow-x: hidden;
-        }
-
-        .rcorners {
-          border-radius: 15px 15px 0px 0px !important;
-        }
-
-        .btn-rcorners {
-          border-radius: 5px 5px 5px 5px !important;
-        }
-
-        .increaseShadow {
-           box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0), 0 6px 20px 0 rgba(0, 0, 0, 0);
-        }
-
-        .row-bordered:after {
-          content: "";
-          display: block;
-          background-image:linear-gradient(to right,rgba(34,37,42,255),rgba(31,34,39,255));
-          border-bottom: 1px solid #ccc;
-          margin: 0 15px;
-        }
-
-        table.tbody {
-            background-color:#eee !important;
-        }
-        .butn{
-            border-style: solid;
-            border-color:'#fff';
-            border-radius:10px;
-            padding:5px;
-            border-width:1px;
-        }
-
-        .btn-group button {
-          background-color: #fff;
-          border: none;
-          color: black;
-          cursor: pointer;
-          margin:2px;
-        }
-
-        .timeline-buttons{
-            background-color: #eee;
-            border: none;
-            color: black;
-            cursor: pointer;
-        }
-
-        .timeline-buttons:hover{
-            background-color:#85C1E9;
-        }
-
-        .btn-group:after {
-          content: "";
-          clear: both;
-          display: table;
-        }
-
-        .selected{
-            background-color:#85C1E9 !important;
-        }
-
-
-        .btn-group button:hover {
-          background-color: #85C1E9 ;
-        }
-
-        .btn-group {
-          border-radius:20px;
-        }
-
-        .calendar-table tbody td:hover{
-            cursor:pointer;
-        }
-        body {
-    position: relative;
-}
-
-.image-wrapper {
-    position: absolute;
-    transform: translate(-50%, -50%);
-    opacity: 1;
-}
-
-.image-wrapper.fade-out {
-    opacity: 0;
-    transition: opacity 1s ease-in-out;
-}
-
-    .weekend{
-        background:#BB8FCE;
-    }
-    .block_closure{
-         background:#F4D03F;
-    }
-    .shut_down{
-        background:#95A5A6;
-    }
-    .festival{
-        background:#AED6F1;
-    }
-
-    </style>
+<body class="">
     <div class="modal" id="myModal">
         <div class="modal-dialog model-lg" style="max-width: 35% !important;">
             <div class="modal-content">
@@ -158,15 +39,15 @@
                     <div class="d-flex flex-column" >
                         <select class="form-control-sm mb-2" id="leaveType">
                             <option value="" selected disabled>Select leave type</option>
-                            <option value="PL( Privilege Leave )">PL( Privilege Leave )</option>
-                            <option value="CL( Casual Leave )">CL( Casual Leave )</option>
-                            <option value="SL( Sick Leave )">SL( Sick Leave )</option>
+                            <option value="Standard Leave">Standard Leave</option>
+                            <!-- <option value="CL( Casual Leave )">CL( Casual Leave )</option> -->
+                            <option value="Sick Leave">Sick Leave</option>
                         </select>
 
                         <select class="form-control-sm mb-2" id="leaveDuration">
                             <option value="Full Day" selected>Full Day</option>
-                            <option value="First Half">First Half</option>
-                            <option value="Second Half">Second Half</option>
+                            <option value="Half Day">Half Day</option>
+                            <!-- <option value="Second Half">Second Half</option> -->
                         </select>
 
                         <div class="mb-2 row">
@@ -201,158 +82,186 @@
             </div>
         </div>
     </div>
-    <div style="background-color:rgba(23,24,26,255);height:100vh;width:100vw;padding:5px;">
-        <div class="row-bordered text-center text-black" style="width:100%;height:7%">
-            <div class="text-white d-flex flex-inline justify-content-between">
-                <div class ="text-white text-center m-1">{{name}} ({{shop}} - {{line}})</div>
-                <h4>Men On Roll Leave</h4>
-                <div>
-                    <button class="btn btn-sm btn-success m-1 increaseShadow" data-toggle="modal" data-target="#myModal"><i
-                        class="fa fa-plus"></i> Apply Leave
-                    </button>
-                    <a href="{% url 'LMS:changepassword' %}" class = "btn btn-sm btn-warning m-1 increaseShadow">Change Password</a>
-                    <a href="{% url 'LMS:logout' %}" class = "btn btn-sm btn-danger m-1 increaseShadow">Logout</a>
-                </div>
-            </div>
-        </div>
-        <div class="d-flex flex-inline justify-content-around mb-1" style="height:43%">
-            <div style="width:40%;">
-                <div class="text-white text-center row-bordered p-3">
-                    <h5>Quota Overview</h5>
-                </div>
-                <div class="d-flex flex-inline justify-content-around" style="margin:auto;">
-                    <div class="col-4">
-                        <div style="height:70%;">
-                            <canvas id="clStatus"></canvas>
-                        </div>
-                        <div style="height:30%">
-                            <div style="width:100%" class="text-center text-white">
-                                {{data_list.total_available_cl}} / {{data_list.total_assigned_cl}}
-                            </div>
-                            <div style="width:100%" class="text-center text-white">
-                                Casual Leave
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div style="height:70%;">
-                            <canvas id="plStatus"></canvas>
-                        </div>
-                        <div style="height:30%">
-                            <div style="width:100%" class="text-center text-white">
-                                {{data_list.total_available_pl}} / {{data_list.total_assigned_pl}}
-                            </div>
-                            <div style="width:100%" class="text-center text-white">
-                                Privilege Leave
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div style="height:70%;">
-                            <canvas id="slStatus"></canvas>
-                        </div>
-                        <div style="height:30%">
-                            <div style="width:100%" class="text-center text-white">
-                               {{data_list.total_available_sl}} / {{data_list.total_assigned_sl}}
-                            </div>
-                            <div style="width:100%" class="text-center text-white">
-                                Sick Leave
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="text-#566573" style="margin-left:auto;margin-right:auto;width:35%;">
-                <div class="d-flex flex-inline row-bordered p-2" style="border-bottom: 1px solid #ccc;margin-bottom:15px;">
-                    <div class="text-white mr-auto">
-                        <h5>Holiday List</h5>
-                    </div>
-                </div>
-                <div class="pl-2 pr-2" style="max-height:75%;overflow:auto;">
-                    <table class="table" style="background-color:rgba(34,37,42,255);max-height:100%;overflow:auto;">
-                        <thead style="font-size:13px;line-height:13px;border: 1px solid white;">
-                            <tr>
-                                <th class="text-uppercase text-center p-1" style="background-color:#5ea7ea;border: 1px solid white;position:sticky;top:0;">Date</th>
-                                <th class="text-uppercase text-center p-1" style="background-color:#5ea7ea;border: 1px solid white;position:sticky;top:0;">Holiday Type</th>
-                            </tr>
-                        </thead>
-    
-                        <tbody>
-                        {% for holiday in holidays %}
-                        <tr class="text-white text-center" style="line-height:3px; font-size:12px;">
-                            <td style="border: 1px solid white">{{holiday.date_today}}</td>
-                            <td style="border: 1px solid white">{{holiday.type_of_holiday}}</td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        
-        
-        <div class="text-#566573" style="margin-left:auto;margin-right:auto;width:80%;">
-            <div class="d-flex flex-inline row-bordered p-2" style="border-bottom: 1px solid #ccc;margin-bottom:15px;">
-                <div class="text-white mr-auto">
-                    <h5>Leave Listing ({{Ticket_No}})</h5>
-                </div>
-                <div class="d-flex flex-inline justify-content-around col-6">
-                    <input id="monthSelector" type="month" min="{{min_month}}" max="{{max_month}}" value="{{current_month_name}}">
-                    <select id="leaveTypeSelect" class="form-control-sm">
-                        <option value="All">All Leave Type</option>
-                        <option value="PL( Privilege Leave )">PL( Privilege Leave )</option>
-                        <option value="CL( Casual Leave )">CL( Casual Leave )</option>
-                        <option value="SL( Sick Leave )">SL( Sick Leave )</option>
-                    </select>
-                    <select id="statusSelect" class="form-control-sm">
-                        <option value="All">All Status</option>
-                        <option value="0">Waiting</option>
-                        <option value="1">Approved</option>
-                        <option value="2">Rejected</option>
-                    </select>
-                </div>
-            </div>
-            <div class="pl-2 pr-2" style="max-height:200px;overflow-y:scroll;">
-                <table class="table" id="userTable" style="background-color:rgba(34,37,42,255);max-height:200px;overflow-y:scroll;">
-                    <thead style="font-size:13px;line-height:13px;border: 1px solid white;">
-                        <tr>
-                            <th class="text-uppercase text-center p-1" style="background-color:#5ea7ea;border: 1px solid white;position:sticky;top:0;">Leave Category</th>
-                            <th class="text-uppercase text-center p-1" style="background-color:#5ea7ea;border: 1px solid white;position:sticky;top:0;">From Date</th>
-                            <th class="text-uppercase text-center p-1" style="background-color:#5ea7ea;border: 1px solid white;position:sticky;top:0;">To Date</th>
-                            <th class="text-uppercase text-center p-1" style="background-color:#5ea7ea;border: 1px solid white;position:sticky;top:0;">Status</th>
-                            <th class="text-uppercase text-center p-1" style="background-color:#5ea7ea;border: 1px solid white;position:sticky;top:0;">Action By</th>
-                            <th class="text-uppercase text-center p-1" style="background-color:#5ea7ea;border: 1px solid white;position:sticky;top:0;">Reason</th>
-                        </tr>
-                    </thead>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light navbar-absolute fixed-top bg-dark">
+        <div class="container-fluid">
+          <div class="navbar-wrapper">
+            <!-- <a class="navbar-brand" href="#pablo"></a> -->
+            <div class ="text-center m-1">{{name}} ({{shop}} - {{line}})</div>
+          </div>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="navbar-toggler-icon icon-bar"></span>
+            <span class="navbar-toggler-icon icon-bar"></span>
+            <span class="navbar-toggler-icon icon-bar"></span>
+          </button>
 
-                    <tbody>
-                    {% for leave in leave_list reversed %}
-                    <tr class="text-white text-center" style="line-height:3px; font-size:12px;">
-                        <td style="border: 1px solid white">{{leave.leave_type}}</td>
-                        <td style="border: 1px solid white">{{leave.from_date|safe}}</td>
-                        <td style="border: 1px solid white">{{leave.to_date|safe}}</td>
-                        {% if leave.status == 0 %}
-                        <td style="background-color:#c9b100;border: 1px solid white">Waiting</td>
-                        {% elif leave.status == 1 %}
-                        <td style="background-color:#52BE80;border: 1px solid white">Approved</td>
-                        {% else %}
-                        <td style="background-color:#EC7063;border: 1px solid white">Rejected</td>
-                        {% endif %}
-                        <td style="border: 1px solid white">{{leave.action_by|safe}}</td>
-                        <td style="border: 1px solid white">{{leave.reason|safe}}</td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+          <div class="collapse navbar-collapse justify-content-end">
+            <ul class="navbar-nav">
+              <li class="nav-item dropdown">
+                <button class="btn btn-sm btn-success m-1 increaseShadow" data-toggle="modal" data-target="#myModal">Apply Leave
+                </button>
+                <a href="{% url 'LMS:changepassword' %}" class = "btn btn-sm btn-warning m-1 increaseShadow">Change Password</a>
+                <a href="{% url 'LMS:logout' %}" class = "btn btn-sm btn-danger m-1 increaseShadow">Logout</a>
+              </li>
+            </ul>
 
-<!--<i class="fa fa-angle-double-right fa-2x text-white" style="cursor:pointer;margin-top:auto;margin-bottom:auto;"></i>-->
-<!--            <a href="#" class="next round" style="height:100px">&#8250; </a>-->
+          </div>
         
+        </div>
+      </nav>
+
+      <!-- End Navbar -->
+
+  <div class="wrapper ">
+    <div class="main-panel">
+
+      
+      <div class="content">
+        <div class="container-fluid">
+
+          {% block content %}
+         
+          <div class="center-c1">
+            
+          <div class="col-md-8 col-lg-8">
+            <!-- <button class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal">Apply Leave</button> -->
+            <div class="card">
+            <div class="card-header card-header-text card-header-warning">
+            <div class="card-text">
+            <h4 class="card-title">Upcoming Holidays</h4>
+            </div>
+            </div>
+            <div class="card-body table-responsive table-striped">
+              <div class="table ">
+              <div class="table-wrapper">
+            <table class="table table-hover">
+            <thead class="text-warning">
+            <tr><th>Holiday Name</th>
+            <th>Day</th>
+            <th>Date</th>
+            </tr></thead>
+            <tbody>
+            {% for holiday in holidays %}
+            <tr>
+                <td>{{holiday.type_of_holiday}}</td>
+                <td>{{ holiday.date_today|date:"l" }}</td>
+                <td>{{holiday.date_today}}</td>
+            
+            </tr>
+            {% endfor %}
+            
+            </tbody>
+            </table>
+            </div>
+          </div>
+          </div>
+            </div>
+            </div>
+          </div>
+            
+                    <div class="center-c2 pb-3">
+                        <div class="col-md-12">
+                          
+                          <div class="card">
+                            <div class="card-header card-header-primary">
+                              <h4 class="card-title ">Leave History
+                                <!-- <form action="/"> -->
+                                    <input class = "float-right btn btn-warning select" id="monthSelector" type="month" min="{{min_month}}" max="{{max_month}}" value="{{current_month_name}}">
+                                <!-- </form> -->
+                                <!-- <form action="/"> -->
+                                  <select class = "float-right btn btn-warning select" id="leaveTypeSelect" class="form-control-sm">
+                                    <option value="All">All Leave Type</option>
+                                    <option value="Standard Leave">Standard Leave</option>
+                                    <option value="Sick Leave">Sick Leave</option>
+                                  </select>
+                                <!-- </form> -->
+                                <!-- <form action="/"> -->
+                                  <select class = "float-right btn btn-warning select" id="statusSelect" class="form-control-sm">
+                                    <option value="All">All Status</option>
+                                    <option value="0">Waiting</option>
+                                    <option value="1">Approved</option>
+                                    <option value="2">Rejected</option>
+                                  </select>
+                                <!-- </form> -->
+                              </h4>
+                            </div>
+                            <div class="card-body">
+                              <div class="table-responsive table-striped">
+                                <table class="table" id="userTable">
+                                  <thead class=" text-primary">
+                                    <th>
+                                      Leave Type
+                                    </th>
+                                    <th>
+                                      From
+                                    </th>
+                                    <th>
+                                      To
+                                    </th>
+                                    <th>
+                                      Status
+                                    </th>
+                                    <th>
+                                      Action By
+                                    </th>
+                                    <th>
+                                      Reason
+                                    </th>
+                                  </thead>
+                                  <tbody>
+                                    {% for leave in leave_list %}
+                                    <tr>
+                                      <td>
+                                        {{leave.leave_type}}
+                                      </td>
+                                      <td>
+                                        {{leave.from_date|safe}}
+                                      </td>
+                                      <td>
+                                        {{leave.to_date|safe}}
+                                      </td>
+                                      <!-- <td> -->
+                                        {% if leave.status == 0 %}
+                                        <td><span class="text-warning">Waiting</span></td>
+                                        {% elif leave.status == 1 %}
+                                        <td><span class="text-success">Approved</span></td>
+                                        {% else %}
+                                        <td><span class="text-danger">Rejected</span></td>
+                                        {% endif %}
+                                      <!-- </td> -->
+                                      <td>
+                                        {{leave.action_by|safe}}
+                                      </td>
+                                      <td >
+                                        {{leave.reason|safe}}
+                                      </td>
+                                    </tr>
+                                    {% endfor %}
+                                    
+                                  </tbody>
+                                </table>
+                            </div>
+                            </div>
+                          </div>
+                        </div>
+          {% endblock content %}
+
+        </div>
+      </div>
 
     </div>
-<script>
+  </div>
+
+  <footer class="footer bg-dark py-3 mt-auto fixed-bottom">
+    <div class="container text-left">
+        <span class="text-muted">&copy GEHU</span>
+    </div>
+</footer>
+  
+  {% include 'includes/scripts.html' %}
+  
+  <script>
     $("#statusSelect").change(function(){
         var status = $(this).val();
         var leaveType = $("#leaveTypeSelect  option:selected").val();
@@ -410,21 +319,20 @@
         $("#userTable tbody").empty();
         for(index=0;index<data_list.length;index++){
             if(data_list[index].status === 0){
-                var status = "<td style='background-color:#c9b100;border: 1px solid white'>Waiting</td>";
+                var status = "<td><span class='text-warning'>Waiting</span></td>";
             }else if(data_list[index].status === 1){
-                var status = "<td style='background-color:#52BE80;border: 1px solid white'>Approved</td>";
+                var status = "<td><span class='text-success'>Approved</span></td>";
             }else{
-                var status = "<td style='background-color:#EC7063;border: 1px solid white'>Rejected</td>";
+                var status = "<td><span class='text-danger'>Approved</span></td>";
             }
             var row = $("<tr>")
-            .append("<td style='border: 1px solid white'>"+ data_list[index].leave_type +"</td>")
-            .append("<td style='border: 1px solid white'>"+ data_list[index].from_date +"</td>")
-            .append("<td style='border: 1px solid white'>"+ data_list[index].to_date +"</td>")
+            .append("<td>"+ data_list[index].leave_type +"</td>")
+            .append("<td>"+ data_list[index].from_date +"</td>")
+            .append("<td>"+ data_list[index].to_date +"</td>")
             .append(status)
-            .append("<td style='border: 1px solid white'>"+ data_list[index].action_by +"</td>")
-            .append("<td style='border: 1px solid white'>"+ data_list[index].reason +"</td>");
-            row.addClass('text-white text-center');
-            row.css({"line-height":"3px","font-size":"12px"});
+            .append("<td>"+ data_list[index].action_by +"</td>")
+            .append("<td>"+ data_list[index].reason +"</td>");
+            
             $("#userTable tbody").append(row);
         }
     }
@@ -467,6 +375,17 @@
 
 
     $("#leaveType").change(function(){
+        var leaveType = $(this).val();
+        if((leaveType.localeCompare('Standard Leave') == 0)){
+            var from_date = $("#from_date").val();
+            var to_date = $("#to_date").val();
+            if(to_date){
+                $("#to_date").val(from_date);
+                $("#to_date").attr("max",from_date);
+            }
+        }else{
+            $("#to_date").attr("max","");
+        }
         $("#validationTable tbody").empty();
         $("#validationAlert").css("display","None");
         $("#validationSuccess").css("display","None");
@@ -501,7 +420,7 @@
 
     $("#leaveDuration").change(function(){
         var leaveDuration = $(this).val();
-        if((leaveDuration.localeCompare('First Half') == 0) || (leaveDuration.localeCompare('Second Half') == 0)){
+        if((leaveDuration.localeCompare('Half Day') == 0)){
             var from_date = $("#from_date").val();
             var to_date = $("#to_date").val();
             if(to_date){
@@ -546,7 +465,7 @@
                         $("#validationAlert").css("display","");
                     }else if(data['availableQuota'].localeCompare("1") == 0){
                         console.log(123);
-                        $("#validationAlert").text('Please select lesser number of dates, as the selected range has exceeded the available quota for the selected leave type.');
+                        $("#validationAlert").text('You cannot apply for more than 1 Standard leave in a month.');
                         $("#validationAlert").css("display","");
                     }else{
                         $("#applyLeaveButton").text('Apply Leave');
@@ -602,14 +521,12 @@
                 },
                 success:function(data){
                     var row = $("<tr>")
-                    .append("<td style='border: 1px solid white'>"+ leaveType +"</td>")
-                    .append("<td style='border: 1px solid white'>"+ fromDate +"</td>")
-                    .append("<td style='border: 1px solid white'>"+ toDate +"</td>")
-                    .append("<td style='background-color:#c9b100;border: 1px solid white'>Waiting</td>")
-                    .append("<td style='border: 1px solid white'>" +"</td>")
-                    .append("<td style='border: 1px solid white'>" +"</td>");;
-                    row.addClass('text-white text-center');
-                    row.css({"line-height":"3px","font-size":"12px"});
+                    .append("<td>"+ leaveType +"</td>")
+                    .append("<td>"+ fromDate +"</td>")
+                    .append("<td>"+ toDate +"</td>")
+                    .append("<td class='text-warning'>Waiting</td>")
+                    .append("<td>" +"</td>")
+                    .append("<td>" +"</td>");
                     $("#userTable tbody").append(row);
                     closeModal();
                 }
@@ -625,7 +542,8 @@
         $("#to_date").attr("min",t);
         $("#to_date").removeAttr("disabled");
         var leaveDuration = $("#leaveDuration option:selected").val();
-        if((leaveDuration.localeCompare('First Half') == 0) || (leaveDuration.localeCompare('Second Half') == 0)){
+        var leaveType = $("#leaveType option:selected").val();
+        if((leaveDuration.localeCompare('Half Day') == 0) || (leaveType.localeCompare('Standard Leave') == 0)){
             var from_date = $("#from_date").val();
             $("#to_date").val(from_date);
             $("#to_date").attr("max",from_date);
@@ -652,7 +570,8 @@
         var t = $(this).val();
         $("#to_date").attr("min",t);
         var leaveDuration = $("#leaveDuration option:selected").val();
-        if((leaveDuration.localeCompare('First Half') == 0) || (leaveDuration.localeCompare('Second Half') == 0)){
+        var leaveType = $("#leaveType option:selected").val();
+        if((leaveDuration.localeCompare('Half Day') == 0) || (leaveType.localeCompare('Standard Leave') == 0)){
             var from_date = $("#from_date").val();
             $("#to_date").val(from_date);
             $("#to_date").attr("max",from_date);
@@ -669,195 +588,11 @@
         $("#validationSuccess").text('');
         $("#validationSuccess").css("display","None");
     });
-
-    var counter={
-        id:'counter',
-        beforeDraw( chart, args, options ){
-            const { ctx, chartArea: { top, right, bottom, left, width, height } } = chart;
-            ctx.save();
-            ctx.font = '30px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillStyle = '#fff';
-            ctx.fillText(options.available+'%',width/2, top + (height/2));
-        }
-    };
-
-    var ctxPLStatus = document.getElementById('plStatus').getContext('2d');
-    var ctxCLStatus = document.getElementById('clStatus').getContext('2d');
-    var ctxSLStatus = document.getElementById('slStatus').getContext('2d');
-
-
-
-
-
-    $(document).ready(function(){
-        var chartDataPL = {
-            labels: [],
-            datasets: [{
-                data:[parseInt("{{percentPlAvailable}}"),100-parseInt("{{percentPlAvailable}}")],
-                backgroundColor:['#5ea7ea','#eee'],
-                borderColor:['#5ea7ea','#eee'],
-                borderWidth:1,
-                cutout:'90%',
-                datalabels: {
-                    display: 'true',
-                    color:'white',
-                    formatter: function(value, context) {
-                      return value + '%';
-                    },
-                    font: {
-                      color: 'red',
-                      weight: 'bold',
-                    }
-                },
-            }]
-
-        };
-        var configPL = {
-            type:'doughnut',
-            data: chartDataPL,
-            options: {
-                onClick: function(evt){
-                },
-                plugins: {
-                    'counter':{
-                        'available':"{{percentPlAvailable}}"
-                    },
-                    legend: {
-                        labels: {
-                            color: 'white',
-                            usePointStyle: true,
-                        }
-                    }
-                },
-                maintainAspectRatio: false,
-                responsive: true,
-                title: {
-                    display: false,
-                },
-            },
-            plugins: [counter],
-        };
-        var plStatusPlot = new Chart(ctxPLStatus, configPL);
-
-        var chartDataCL = {
-            labels: [],
-            datasets: [{
-                data:[parseInt("{{percentClAvailable}}"),100-parseInt("{{percentClAvailable}}")],
-                backgroundColor:['#5ea7ea','#eee'],
-                borderColor:['#5ea7ea','#eee'],
-                borderWidth:1,
-                cutout:'90%',
-                datalabels: {
-                    display: 'true',
-                    color:'white',
-                    formatter: function(value, context) {
-                      return value + '%';
-                    },
-                    font: {
-                      color: 'red',
-                      weight: 'bold',
-                    }
-                },
-            }]
-
-        };
-        var configCL = {
-            type:'doughnut',
-            data: chartDataCL,
-            options: {
-                onClick: function(evt){
-                },
-                plugins: {
-                    'counter':{
-                        'available':"{{percentClAvailable}}"
-                    },
-                    legend: {
-                        labels: {
-                            color: 'white',
-                            usePointStyle: true,
-                        }
-                    }
-                },
-                maintainAspectRatio: false,
-                responsive: true,
-                title: {
-                    display: false,
-                },
-            },
-            plugins: [counter],
-        };
-        var clStatusPlot = new Chart(ctxCLStatus, configCL);
-
-
-        var chartDataSL = {
-            labels: [],
-            datasets: [{
-                data:[parseInt("{{percentSlAvailable}}"),100-parseInt("{{percentSlAvailable}}")],
-                backgroundColor:['#5ea7ea','#eee'],
-                borderColor:['#5ea7ea','#eee'],
-                borderWidth:1,
-                cutout:'90%',
-                datalabels: {
-                    display: 'true',
-                    color:'white',
-                    formatter: function(value, context) {
-                      return value + '%';
-                    },
-                    font: {
-                      color: 'red',
-                      weight: 'bold',
-                    }
-                },
-            }]
-
-        };
-        var configSL = {
-            type:'doughnut',
-            data: chartDataSL,
-            options: {
-                onClick: function(evt){
-                },
-                plugins: {
-                    'counter':{
-                        'available':"{{percentSlAvailable}}"
-                    },
-                    legend: {
-                        labels: {
-                            color: 'white',
-                            usePointStyle: true,
-                        }
-                    }
-                },
-                maintainAspectRatio: false,
-                responsive: true,
-                title: {
-                    display: false,
-                },
-            },
-            plugins: [counter],
-        };
-        var slStatusPlot = new Chart(ctxSLStatus, configSL);
-    });
-
-
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-        crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
-<script src='https://code.jquery.com/jquery-3.2.1.min.js'></script>
-<link rel="stylesheet" type="text/css"
-      href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.21/af-2.3.5/b-1.6.2/b-colvis-1.6.2/b-html5-1.6.2/b-print-1.6.2/cr-1.5.2/fc-3.3.1/kt-2.5.2/r-2.2.5/rg-1.1.2/rr-1.2.7/sp-1.1.1/sl-1.3.1/datatables.min.css"/>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
-<script type="text/javascript"
-        src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.21/af-2.3.5/b-1.6.2/b-colvis-1.6.2/b-html5-1.6.2/b-print-1.6.2/cr-1.5.2/fc-3.3.1/kt-2.5.2/r-2.2.5/rg-1.1.2/rr-1.2.7/sp-1.1.1/sl-1.3.1/datatables.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-        crossorigin="anonymous"></script>
 
+  <!-- Specific Page JS goes HERE  -->
+  {% block javascripts %}{% endblock javascripts %}
 </body>
 
 </html>

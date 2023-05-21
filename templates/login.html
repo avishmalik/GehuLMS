@@ -32,14 +32,14 @@
     
 
 </head>
-<body style = "background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('{% static 'img/3.jpg' %}');">
+<body style = "background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('{% static 'img/backg.jpg' %}');">
 <main>
 
 <div class="container d-flex justify-content-center align-items-center ">
-    <div class="row" style = "z-index: 1; position: relative; text-align: center; padding-top: 16vh;">
+    <div class="row" style = "z-index: 1; position: relative; text-align: center; padding-top: 12vh;">
         <div class="col-md-6 offset-md-3 col-xl-4 offset-xl-4">
-            <div class="card shadow">
-                <img src="{% static 'img/tata.jpg' %}"
+            <div class="card shadow bg-dark text-white">
+                <img src="{% static 'img/log.jpg' %}"
                     alt="" class="card-img-top" />
                 <div class="card-body">
 
@@ -47,15 +47,15 @@
                         {% if msg %}
                             {{ msg | safe }}
                         {% else %}
-                            <h1>Login</h1>
+                            <h1 class="text-white">Login</h1>
                         {% endif %}
                       </span>
                         <form  method="post">
                             {% csrf_token %}
                           <div class="form-group first">
-                            Ticket No
-                            <label for="Ticket_No"></label>
-                              {{ form.Ticket_No }}
+                            Email
+                            <label for="email"></label>
+                              {{ form.email }}
                           </div>
                           <div class="form-group last mb-4">
                             Password

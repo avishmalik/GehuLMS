@@ -28,6 +28,6 @@ urlpatterns = [
 ]+ static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)
 
 
-admin.site.index_title = "Men On Roll Leave Management System"
-admin.site.site_header = "Men On Roll LMS"
+admin.site.index_title = "STAFF MEMBERS Leave Management System"
+admin.site.site_header = "STAFF MEMBERS LMS"
 admin.site.site_title = "LMS Admin Login"

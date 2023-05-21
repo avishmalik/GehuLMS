@@ -12,7 +12,7 @@ from leaves.models import *
 from LMS.models import *
 # from leave.forms import LeaveCreationForm
 from django.http import JsonResponse
-
+from dateutil.relativedelta import relativedelta
 
 
 # -------------------------------Dashboard Requirements--------------------------------
@@ -22,42 +22,76 @@ def dashboard(request):
 		return redirect('LMS:login_view')
 
 	dataset = dict()
-	Current_Shop = request.user.Current_Shop
-	Cost_Center_Name = request.user.Cost_Center_Name
+	Department = request.user.Department
+	Role = request.user.Role
 	num = 0
 	approved_list = []
 	total_list = []
 	date_list = []
 	mp1 = []
 	mp2 = []
-	if request.user.is_supervisor:
-		employees = CustomUser.objects.filter(Current_Shop = Current_Shop,Cost_Center_Name = Cost_Center_Name,is_supervisor = False,is_shop_incharge = False)
+	date_check = datetime.date.today() + datetime.timedelta(days=1)
+	if request.user.is_hod:
+		employees = CustomUser.objects.filter(Department = Department,is_hod = False,is_director = False)
 		num = employees.count()
-		for i in range(1,8):
-			date_list.append((datetime.date.today() + datetime.timedelta(days=i)))
-			x = holidayList.objects.filter(date_today = (datetime.date.today() + datetime.timedelta(days=i)))
-			if x.count():
-				total_list.append('HOLIDAY')
-				approved_list.append('HOLIDAY')
-				mp1.append('HOLIDAY')
-				mp2.append(x[0].type_of_holiday)
-			else:
-				mp1.append('')
-				mp2.append('')
-				temp1 = approvedLeavesDatabase.objects.filter(on_date = (datetime.date.today() + datetime.timedelta(days=i)),leave_duration = 'First Half',Current_Shop = Current_Shop,Cost_Center_Name= Cost_Center_Name)
-				temp2 = approvedLeavesDatabase.objects.filter(on_date = (datetime.date.today() + datetime.timedelta(days=i)),leave_duration = 'Second Half',Current_Shop = Current_Shop,Cost_Center_Name= Cost_Center_Name)
-				temp3 = approvedLeavesDatabase.objects.filter(on_date = (datetime.date.today() + datetime.timedelta(days=i)),leave_duration = 'Full Day',Current_Shop = Current_Shop,Cost_Center_Name= Cost_Center_Name)
-				k = (temp1.count()*0.5) + (temp2.count()*0.5) + (temp3.count())
-				approved_list.append(k)
-				if num != 0:
-					total_list.append(round((k/num) * 100,2))
-				else:
-					total_list.append(0)
+		date_check = datetime.date.today() + datetime.timedelta(days=1)
+		email = request.user.email
+		labels = []
+		count = [1, 10]
+		date_list = []
+		i = 0
+		weekly_list = []
+		months = {
+			1: "JANUARY",
+			2: "FEBRUARY",
+			3: "MARCH",
+			4: "APRIL",
+			5: "MAY",
+			6: "JUNE",
+			7: "JULY",
+			8: "AUGUST",
+			9: "SEPTEMBER",
+			10: "OCTOBER",
+			11: "NOVEMBER",
+			12: "DECEMBER"
+		}
+		m = 0
+		month_list = []
+		start_date = datetime.date.today()
+		current_month = datetime.date.today().month
+		current_year = datetime.date.today().year
+		holidays = holidayList.objects.filter(Q(date_today__gte=start_date)).order_by('date_today')
+		start_date = datetime.date(datetime.date.today().year, datetime.date.today().month, 1)
+		end_date = start_date + relativedelta(day=31)
+		leave_list = cumulativeLeavesDatabase.objects.filter(email = email).filter(
+			Q(from_date__gte=start_date, from_date__lte=end_date) | Q(
+				Q(to_date__gte=start_date, to_date__lte=end_date))).order_by('from_date').values()
+		min_month = datetime.date(datetime.date.today().year - 1, 1, 1).strftime('%Y-%m')
+		max_month = datetime.date(datetime.date.today().year, 12, 1).strftime('%Y-%m')
+		name = request.user.Complete_Name
+		shop = request.user.Department
+		line = request.user.Role
+		dataset = {
+			'date_list': date_list,
+			'month_list': month_list,
+			'min_month': min_month,
+			'max_month': max_month,
+			'current_month_name': datetime.date.today().strftime('%Y-%m'),
+			'leave_list': leave_list,
+			'date_check': date_check,
+			"email": email,
+			'holidays' : holidays,
+			"name":name,
+			"shop":shop,
+			"line":line,
+			'labels': labels,
+			'count': count,
+			'employees':employees
+		}
     
-		dataset['employees'] = employees
   
-	elif request.user.is_shop_incharge:
-		employees = CustomUser.objects.filter(Current_Shop = Current_Shop,is_supervisor = False,is_shop_incharge = False)
+	elif request.user.is_director:
+		employees = CustomUser.objects.filter(Department = Department,is_hod = False,is_director = False)
 		num = employees.count()
 		for i in range(1,8):
 			date_list.append((datetime.date.today() + datetime.timedelta(days=i)))
@@ -70,9 +104,9 @@ def dashboard(request):
 			else:
 				mp1.append('')
 				mp2.append('')
-				temp1 = approvedLeavesDatabase.objects.filter(on_date = (datetime.date.today() + datetime.timedelta(days=i)),leave_duration = 'First Half',Current_Shop = Current_Shop)
-				temp2 = approvedLeavesDatabase.objects.filter(on_date = (datetime.date.today() + datetime.timedelta(days=i)),leave_duration = 'Second Half',Current_Shop = Current_Shop)
-				temp3 = approvedLeavesDatabase.objects.filter(on_date = (datetime.date.today() + datetime.timedelta(days=i)),leave_duration = 'Full Day',Current_Shop = Current_Shop)
+				temp1 = approvedLeavesDatabase.objects.filter(on_date = (datetime.date.today() + datetime.timedelta(days=i)),leave_duration = 'First Half',Department = Department)
+				temp2 = approvedLeavesDatabase.objects.filter(on_date = (datetime.date.today() + datetime.timedelta(days=i)),leave_duration = 'Second Half',Department = Department)
+				temp3 = approvedLeavesDatabase.objects.filter(on_date = (datetime.date.today() + datetime.timedelta(days=i)),leave_duration = 'Full Day',Department = Department)
 				k = (temp1.count()*0.5) + (temp2.count()*0.5) + (temp3.count())
 				approved_list.append(k)
 				if num != 0:
@@ -80,22 +114,13 @@ def dashboard(request):
 				else:
 					total_list.append(0)
     
-		dataset['lines'] = CustomUser.objects.filter(Current_Shop = Current_Shop).order_by('Cost_Center_Name').distinct('Cost_Center_Name')
+		dataset['lines'] = CustomUser.objects.filter(Department = Department).order_by('Role').distinct('Role')
 		dataset['line'] = 'x'
 		dataset['employees'] = employees
 	
-	dataset['mp1'] = mp1
-	dataset['mp2'] = mp2
-	dataset['approved_list'] = approved_list
-	dataset['day1'] = total_list[0]
-	dataset['day2'] = total_list[1]
-	dataset['day3'] = total_list[2]
-	dataset['day4'] = total_list[3]
-	dataset['day5'] = total_list[4]
-	dataset['day6'] = total_list[5]
-	dataset['day7'] = total_list[6]
-	dataset['date_list'] = date_list
+	# dataset['date_list'] = date_list
 	dataset['num'] = num
+	dataset['date_check'] = date_check
  
 	return render(request,'dashboard/dashboard_index.html',dataset)
 
@@ -106,9 +131,9 @@ def linedashboard(request,id):
 		return redirect('LMS:login_view')
 	
 	dataset = dict()
-	Current_Shop = request.user.Current_Shop
-	Cost_Center_Name = get_object_or_404(CustomUser,Ticket_No = id).Cost_Center_Name
-	employees = CustomUser.objects.filter(Current_Shop = Current_Shop,Cost_Center_Name = Cost_Center_Name,is_supervisor = False,is_shop_incharge = False)
+	Department = request.user.Department
+	Role = get_object_or_404(CustomUser,email = id).Role
+	employees = CustomUser.objects.filter(Department = Department,Role = Role,is_hod = False,is_director = False)
 	num = employees.count()
 	approved_list = []
 	total_list = []
@@ -126,9 +151,9 @@ def linedashboard(request,id):
 		else:
 			mp1.append('')
 			mp2.append('')
-			temp1 = approvedLeavesDatabase.objects.filter(on_date = (datetime.date.today() + datetime.timedelta(days=i)),leave_duration = 'First Half',Current_Shop = Current_Shop,Cost_Center_Name= Cost_Center_Name)
-			temp2 = approvedLeavesDatabase.objects.filter(on_date = (datetime.date.today() + datetime.timedelta(days=i)),leave_duration = 'Second Half',Current_Shop = Current_Shop,Cost_Center_Name= Cost_Center_Name)
-			temp3 = approvedLeavesDatabase.objects.filter(on_date = (datetime.date.today() + datetime.timedelta(days=i)),leave_duration = 'Full Day',Current_Shop = Current_Shop,Cost_Center_Name= Cost_Center_Name)
+			temp1 = approvedLeavesDatabase.objects.filter(on_date = (datetime.date.today() + datetime.timedelta(days=i)),leave_duration = 'First Half',Department = Department,Role= Role)
+			temp2 = approvedLeavesDatabase.objects.filter(on_date = (datetime.date.today() + datetime.timedelta(days=i)),leave_duration = 'Second Half',Department = Department,Role= Role)
+			temp3 = approvedLeavesDatabase.objects.filter(on_date = (datetime.date.today() + datetime.timedelta(days=i)),leave_duration = 'Full Day',Department = Department,Role= Role)
 			k = (temp1.count()*0.5) + (temp2.count()*0.5) + (temp3.count())
 			approved_list.append(k)
 			if num != 0:
@@ -138,9 +163,9 @@ def linedashboard(request,id):
    
 	dataset['mp1'] = mp1
 	dataset['mp2'] = mp2
-	dataset['lines'] = CustomUser.objects.filter(Current_Shop = Current_Shop).order_by('Cost_Center_Name').distinct('Cost_Center_Name')
+	dataset['lines'] = CustomUser.objects.filter(Department = Department).order_by('Role').distinct('Role')
 	dataset['employees'] = employees
-	dataset['line'] = Cost_Center_Name
+	dataset['line'] = Role
 	dataset['approved_list'] = approved_list
 	dataset['day1'] = total_list[0]
 	dataset['day2'] = total_list[1]
@@ -165,16 +190,17 @@ def dashboard_employees(request):
 		return redirect('/logout')
 
 	dataset = dict()
-	Current_Shop = request.user.Current_Shop
-	dataset['shop'] = Current_Shop
-	if request.user.is_supervisor:
-		Cost_Center_Name = request.user.Cost_Center_Name
-		dataset['line'] = Cost_Center_Name
-		dataset['employee_list'] = CustomUser.objects.filter(Current_Shop = Current_Shop,Cost_Center_Name = Cost_Center_Name,is_supervisor = False,is_shop_incharge = False).order_by('Complete_Name')
+	
+	if request.user.is_hod:
+		Role = request.user.Role
+		Department = request.user.Department
+		dataset['shop'] = Department
+		dataset['line'] = Role
+		dataset['employee_list'] = CustomUser.objects.filter(Department = Department,is_hod = False,is_director = False).order_by('Complete_Name')
 
-	elif request.user.is_shop_incharge:
-		dataset['employee_list'] = CustomUser.objects.filter(Current_Shop = Current_Shop,is_supervisor = False,is_shop_incharge = False).order_by('Cost_Center_Name','Complete_Name')
-		dataset['lines'] = CustomUser.objects.filter(Current_Shop = Current_Shop).order_by('Cost_Center_Name').distinct('Cost_Center_Name')
+	if request.user.is_director:
+		dataset['employee_list'] = CustomUser.objects.filter(is_hod = False,is_director = False,is_staff=False).order_by('Department','Complete_Name')
+		dataset['lines'] = CustomUser.objects.all().order_by('Department').distinct('Department')
 		dataset['line'] = 'x'
 	dataset['title'] = "Men_On_Roll"
 	
@@ -182,19 +208,20 @@ def dashboard_employees(request):
 
 
 def employeesfilter(request,id):
-	if not (request.user.is_authenticated and request.user.is_shop_incharge):
+	if not (request.user.is_authenticated and request.user.is_director):
 		return redirect('/logout')
 
 	dataset = dict()
-	Current_Shop = request.user.Current_Shop
-	Cost_Center_Name = get_object_or_404(CustomUser,Ticket_No = id).Cost_Center_Name
-	dataset['shop'] = Current_Shop
+	# Department = request.user.Department
+	Department = get_object_or_404(CustomUser,email = id).Department
+
+	# dataset['shop'] = Department
 	
-	dataset['employee_list'] = CustomUser.objects.filter(Current_Shop = Current_Shop,Cost_Center_Name=Cost_Center_Name,is_supervisor = False,is_shop_incharge = False).order_by('Complete_Name')
+	dataset['employee_list'] = CustomUser.objects.filter(Department=Department,is_hod = False,is_director = False,is_staff= False).order_by('Complete_Name')
 		
 	dataset['title'] = "Men_On_Roll"
-	dataset['lines'] = CustomUser.objects.filter(Current_Shop = Current_Shop).order_by('Cost_Center_Name').distinct('Cost_Center_Name')
-	dataset['line'] = Cost_Center_Name
+	dataset['lines'] = CustomUser.objects.all().order_by('Department').distinct('Department')
+	dataset['line'] = Department
 		
 	return render(request,'dashboard/employee_app.html',dataset)
 
@@ -202,25 +229,25 @@ def employeesfilter(request,id):
 
 # -----------------------------Dashboard And Leave View----------------------------------
 
-def dashboard_employee_info(request,id):
+def dashboard_employee_info(request,email):
 	if not request.user.is_authenticated:
 		return redirect('/logout')
 	
-	employee = get_object_or_404(CustomUser, Ticket_No = id)
-	quota = get_object_or_404(leavesDatabase,Ticket_No = id)
+	employee = get_object_or_404(CustomUser, email = email)
+	email = email
+	# quota = get_object_or_404(leavesDatabase,email = email)
 	
-	Ticket_No = id
 	leaves = cumulativeLeavesDatabase.objects.all_leaves()
-	leaves = leaves.filter(Ticket_No = Ticket_No,from_date__gte=(datetime.date.today() + datetime.timedelta(days=1)))
-	name = get_object_or_404(CustomUser,Ticket_No = Ticket_No).Complete_Name
+	leaves = leaves.filter(email = email,from_date__gte=(datetime.date.today() + datetime.timedelta(days=1)))
+	name = get_object_or_404(CustomUser,email = email).Complete_Name
  
 	dataset = dict()
 	dataset['employee'] = employee
-	dataset['quota'] = quota
+	# dataset['quota'] = quota
 	dataset['title'] = 'profile - {0}'.format(employee.Complete_Name)
 	dataset['leave_list'] = leaves
 	dataset['name'] = name
-	dataset['ticket'] = Ticket_No
+	dataset['email'] = email
  
 	return render(request,'dashboard/employee_detail.html',dataset)
 
@@ -231,9 +258,9 @@ def leaves_view(request,id):
 		return redirect('/login')
 
 	leave = get_object_or_404(cumulativeLeavesDatabase, id = id)
-	Ticket_No = leave.Ticket_No
-	employee = get_object_or_404(CustomUser,Ticket_No = Ticket_No)
-	quota = get_object_or_404(leavesDatabase,Ticket_No = Ticket_No)
+	email = leave.email
+	employee = get_object_or_404(CustomUser,email = email)
+	# quota = get_object_or_404(leavesDatabase,email = email)
 	x = ""
 	if leave.status == 0:
 		x = 'Waiting'
@@ -242,7 +269,7 @@ def leaves_view(request,id):
 	else:
 		x = 'Rejected'
   
-	return render(request,'dashboard/leave_detail_view.html',{'leave':leave,'quota':quota,'employee':employee,'title':'{0}-{1} leave'.format(leave.Complete_Name,x)})
+	return render(request,'dashboard/leave_detail_view.html',{'leave':leave,'employee':employee,'title':'{0}-{1} leave'.format(leave.Complete_Name,x)})
 
 
 
@@ -256,16 +283,44 @@ def leaves_list(request):
 		return redirect('/logout')
 
 	dataset = dict()
-	Current_Shop = request.user.Current_Shop
-	if request.user.is_supervisor:
-		Cost_Center_Name = request.user.Cost_Center_Name
-		leaves = cumulativeLeavesDatabase.objects.all_leaves()
-		dataset['leave_list'] = leaves.filter(Current_Shop = Current_Shop,Cost_Center_Name = Cost_Center_Name,from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).order_by('from_date')
 	
-	elif request.user.is_shop_incharge:
+	if request.user.is_hod:
+		Department = request.user.Department
 		leaves = cumulativeLeavesDatabase.objects.all_leaves()
-		dataset['leave_list'] = leaves.filter(Current_Shop = Current_Shop,from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).order_by('from_date')
+		dataset['leave_list'] = leaves.filter(Department = Department,from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).exclude(Role = 'HOD').order_by('from_date')
 	
+	elif request.user.is_director:
+		leaves = cumulativeLeavesDatabase.objects.all_leaves()
+		dataset['leave_list'] = leaves.filter(from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).order_by('from_date')
+		dataset['x'] = 'All'
+	dataset['title'] = 'All_Leaves'
+	return render(request,'dashboard/leaves_recent.html',dataset)
+
+
+def leaves_list_filter(request,id):
+	if not (request.user.is_authenticated):
+		return redirect('/logout')
+
+	dataset = dict()
+	x = ''
+	if request.user.is_hod:
+		Department = request.user.Department
+		leaves = cumulativeLeavesDatabase.objects.all_leaves()
+		dataset['leave_list'] = leaves.filter(Department = Department,from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).exclude(Role = 'HOD').order_by('from_date')
+	
+	elif request.user.is_director:
+		if id == 'All' or id == None:
+			leaves = cumulativeLeavesDatabase.objects.all_leaves()
+			x = 'All'
+		elif id == '0':
+			leaves = cumulativeLeavesDatabase.objects.filter(Role = 'HOD')
+			x = 'HOD'
+		elif id == '1':
+			leaves = cumulativeLeavesDatabase.objects.all().exclude(Role = 'HOD')
+			x = 'staff'
+    
+		dataset['leave_list'] = leaves.filter(from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).order_by('from_date')
+		dataset['x'] = x
 	dataset['title'] = 'All_Leaves'
 	return render(request,'dashboard/leaves_recent.html',dataset)
 
@@ -276,20 +331,46 @@ def pending_leaves_list(request):
 		return redirect('/login')
 
 	dataset = dict()
-	Current_Shop = request.user.Current_Shop
-	if request.user.is_supervisor:
-		Cost_Center_Name = request.user.Cost_Center_Name
+	
+	if request.user.is_hod:
+		Department = request.user.Department
 		leaves = cumulativeLeavesDatabase.objects.all_pending_leaves()
-		dataset['leave_list'] = leaves.filter(Current_Shop = Current_Shop,Cost_Center_Name = Cost_Center_Name,from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).order_by('from_date')
+		dataset['leave_list'] = leaves.filter(Department = Department,from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).exclude(Role = 'HOD').order_by('from_date')
 		
-	elif request.user.is_shop_incharge:
+	elif request.user.is_director:
 		leaves = cumulativeLeavesDatabase.objects.all_pending_leaves()
-		dataset['leave_list'] = leaves.filter(Current_Shop = Current_Shop,from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).order_by('from_date')
- 
+		dataset['leave_list'] = leaves.filter(from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).order_by('from_date')
+		dataset['x'] = 'All'
+  
 	dataset['title'] = 'Waiting_Leaves'
 	return render(request,'dashboard/leaves_pending.html',dataset)
 
+def pending_leaves_list_filter(request,id):
+	if not (request.user.is_authenticated):
+		return redirect('/logout')
 
+	dataset = dict()
+	x = ''
+	if request.user.is_hod:
+		Department = request.user.Department
+		leaves = cumulativeLeavesDatabase.objects.all_leaves()
+		dataset['leave_list'] = leaves.filter(Department = Department,from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).exclude(Role = 'HOD').order_by('from_date')
+	
+	elif request.user.is_director:
+		if id == 'All' or id == None:
+			leaves = cumulativeLeavesDatabase.objects.filter(status="0")
+			x = 'All'
+		elif id == '0':
+			leaves = cumulativeLeavesDatabase.objects.filter(Role = 'HOD',status="0")
+			x = 'HOD'
+		elif id == '1':
+			leaves = cumulativeLeavesDatabase.objects.filter(status="0").exclude(Role = 'HOD')
+			x = 'staff'
+    
+		dataset['leave_list'] = leaves.filter(from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).order_by('from_date')
+		dataset['x'] = x
+	dataset['title'] = 'All_Leaves'
+	return render(request,'dashboard/leaves_pending.html',dataset)
 
 def leaves_approved_list(request):
 	if not (request.user.is_authenticated):
@@ -297,37 +378,90 @@ def leaves_approved_list(request):
 
 	dataset = dict()
 	leaves = cumulativeLeavesDatabase.objects.all_approved_leaves()
-	Current_Shop = request.user.Current_Shop
  
-	if request.user.is_supervisor:
-		Cost_Center_Name = request.user.Cost_Center_Name
-		dataset['leave_list'] = leaves.filter(Current_Shop = Current_Shop,Cost_Center_Name = Cost_Center_Name,from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).order_by('from_date')
-	elif request.user.is_shop_incharge:
-		dataset['leave_list'] = leaves.filter(Current_Shop = Current_Shop,from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).order_by('from_date')
-
+	if request.user.is_hod:
+		Department = request.user.Department
+		dataset['leave_list'] = leaves.filter(Department = Department,from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).exclude(Role = 'HOD').order_by('from_date')
+	elif request.user.is_director:
+		dataset['leave_list'] = leaves.filter(from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).order_by('from_date')
+		dataset['x'] = 'All'
+  
 	dataset['title'] = 'Approved_Leaves'
 	return render(request,'dashboard/leaves_approved.html',dataset)
 
+def approved_leaves_list_filter(request,id):
+	if not (request.user.is_authenticated):
+		return redirect('/logout')
 
+	dataset = dict()
+	x = ''
+	if request.user.is_hod:
+		Department = request.user.Department
+		leaves = cumulativeLeavesDatabase.objects.all_leaves()
+		dataset['leave_list'] = leaves.filter(Department = Department,from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).exclude(Role = 'HOD').order_by('from_date')
+	
+	elif request.user.is_director:
+		if id == 'All' or id == None:
+			leaves = cumulativeLeavesDatabase.objects.filter(status="1")
+			x = 'All'
+		elif id == '0':
+			leaves = cumulativeLeavesDatabase.objects.filter(Role = 'HOD',status="1")
+			x = 'HOD'
+		elif id == '1':
+			leaves = cumulativeLeavesDatabase.objects.filter(status="1").exclude(Role = 'HOD')
+			x = 'staff'
+    
+		dataset['leave_list'] = leaves.filter(from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).order_by('from_date')
+		dataset['x'] = x
+  
+	dataset['title'] = 'All_Leaves'
+	return render(request,'dashboard/leaves_approved.html',dataset)
 
 def leave_rejected_list(request):
 	if not (request.user.is_authenticated):
 		return redirect('/logout')
 	dataset = dict()
-	Current_Shop = request.user.Current_Shop
 	leaves = cumulativeLeavesDatabase.objects.all_rejected_leaves()
- 
-	if request.user.is_supervisor:
-		Cost_Center_Name = request.user.Cost_Center_Name
-		dataset['leaves_list_rejected'] = leaves.filter(Current_Shop = Current_Shop,Cost_Center_Name = Cost_Center_Name,from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).order_by('from_date')
-	elif request.user.is_shop_incharge:
-		leaves = leaves.filter(Current_Shop = Current_Shop,from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).order_by('from_date')
-		dataset['leave_list_rejected'] = leaves
-  
+	
+	if request.user.is_hod:
+		Department = request.user.Department
+		dataset['leaves_list_rejected'] = leaves.filter(Department = Department,from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).exclude(Role = 'HOD').order_by('from_date')
+	elif request.user.is_director:
+		leaves = leaves.filter(from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).order_by('from_date')
+		dataset['leaves_list_rejected'] = leaves
+		dataset['x'] = 'All'
   
 	dataset['title'] = 'Rejected_Leaves'
 	return render(request,'dashboard/rejected_leaves_list.html',dataset)
 
+
+def leave_rejected_list_filter(request,id):
+	if not (request.user.is_authenticated):
+		return redirect('/logout')
+
+	dataset = dict()
+	x = ''
+	if request.user.is_hod:
+		Department = request.user.Department
+		leaves = cumulativeLeavesDatabase.objects.all_leaves()
+		dataset['leaves_list_rejected'] = leaves.filter(Department = Department,from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).exclude(Role = 'HOD').order_by('from_date')
+	
+	elif request.user.is_director:
+		if id == 'All' or id == None:
+			leaves = cumulativeLeavesDatabase.objects.filter(status="2")
+			x = 'All'
+		elif id == '0':
+			leaves = cumulativeLeavesDatabase.objects.filter(Role = 'HOD',status="2")
+			x = 'HOD'
+		elif id == '1':
+			leaves = cumulativeLeavesDatabase.objects.filter(status="2").exclude(Role = 'HOD')
+			x = 'staff'
+		dataset['x'] = x
+   
+		dataset['leaves_list_rejected'] = leaves.filter(from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).order_by('from_date')
+	
+	dataset['title'] = 'All_Leaves'
+	return render(request,'dashboard/rejected_leaves_list.html',dataset)
 
 
 
@@ -335,91 +469,90 @@ def leave_rejected_list(request):
 # ----------------------------Personal Leaves Sorting----------------------------------
 
 
-def sortedleaves(request,id):
-	if not (request.user.is_supervisor or request.user.is_shop_incharge):
+def sortedleaves(request,email):
+	if not (request.user.is_hod or request.user.is_director):
 		return redirect('/logout')
 
-	Ticket_No = id
+	employee = get_object_or_404(CustomUser, email=email)
+	email = email
 	leaves = cumulativeLeavesDatabase.objects.all_leaves()
-	leaves = leaves.filter(Ticket_No = Ticket_No,from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).order_by('from_date')
-	name = get_object_or_404(CustomUser,Ticket_No = Ticket_No).Complete_Name
+	leaves = leaves.filter(email = email,from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).order_by('from_date')
+	name = get_object_or_404(CustomUser,email = email).Complete_Name
  
-	employee = get_object_or_404(CustomUser, Ticket_No = id)
-	quota = get_object_or_404(leavesDatabase,Ticket_No = id)
+	
+	# quota = get_object_or_404(leavesDatabase,email = email)
  
 	dataset = dict()
 	dataset['employee'] = employee
-	dataset['quota'] = quota
+	# dataset['quota'] = quota
 	dataset['title'] = 'profile - {0}'.format(employee.Complete_Name)
 	dataset['leave_list'] = leaves
 	dataset['name'] = name
-	dataset['ticket'] = Ticket_No
+	dataset['email'] = email
  
 	return render(request,'dashboard/employee_detail.html',dataset)
 
 
 
-def personalapproved(request,id):
-	if not (request.user.is_supervisor or request.user.is_shop_incharge):
+def personalapproved(request,email):
+	if not (request.user.is_hod or request.user.is_director):
 		return redirect('/login')
-
-	Ticket_No = id
+	employee = get_object_or_404(CustomUser, email = email)
+	email = email
 	leaves = cumulativeLeavesDatabase.objects.all_leaves()
-	leaves = leaves.filter(Ticket_No = Ticket_No,status = 1,from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).order_by('from_date')
-	name = get_object_or_404(CustomUser,Ticket_No = Ticket_No).Complete_Name
-	employee = get_object_or_404(CustomUser, Ticket_No = id)
-	quota = get_object_or_404(leavesDatabase,Ticket_No = id)
+	leaves = leaves.filter(email = email,status = 1,from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).order_by('from_date')
+	name = get_object_or_404(CustomUser,email = email).Complete_Name
+	
+	# quota = get_object_or_404(leavesDatabase,email = email)
  
 	dataset = dict()
 	dataset['employee'] = employee
-	dataset['quota'] = quota
+	# dataset['quota'] = quota
 	dataset['title'] = 'profile - {0}'.format(employee.Complete_Name)
 	dataset['leave_list'] = leaves
 	dataset['name'] = name
-	dataset['ticket'] = Ticket_No
+	dataset['email'] = email
 
 	return render(request,'dashboard/employee_detail.html',dataset)
 
 
-def personalwaiting(request,id):
-	if not (request.user.is_supervisor or request.user.is_shop_incharge):
+def personalwaiting(request,email):
+	if not (request.user.is_hod or request.user.is_director):
 		return redirect('/login')
-
-	Ticket_No = id
+	employee = get_object_or_404(CustomUser, email = email)
+	email = email
 	leaves = cumulativeLeavesDatabase.objects.all_leaves()
-	leaves = leaves.filter(Ticket_No = Ticket_No,status = 0,from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).order_by('from_date')
-	name = get_object_or_404(CustomUser,Ticket_No = Ticket_No).Complete_Name
-	employee = get_object_or_404(CustomUser, Ticket_No = id)
-	quota = get_object_or_404(leavesDatabase,Ticket_No = id)
+	leaves = leaves.filter(email = email,status = 0,from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).order_by('from_date')
+	name = get_object_or_404(CustomUser,email = email).Complete_Name
+	# quota = get_object_or_404(leavesDatabase,email = email)
  
 	dataset = dict()
 	dataset['employee'] = employee
-	dataset['quota'] = quota
+	# dataset['quota'] = quota
 	dataset['title'] = 'profile - {0}'.format(employee.Complete_Name)
 	dataset['leave_list'] = leaves
 	dataset['name'] = name
-	dataset['ticket'] = Ticket_No
+	dataset['email'] = email
  
 	return render(request,'dashboard/employee_detail.html',dataset)
 
-def personalrejected(request,id):
-	if not (request.user.is_supervisor or request.user.is_shop_incharge):
+def personalrejected(request,email):
+	if not (request.user.is_hod or request.user.is_director):
 		return redirect('/login')
-
-	Ticket_No = id
+	employee = get_object_or_404(CustomUser, email = email)
+	email = email
 	leaves = cumulativeLeavesDatabase.objects.all_leaves()
-	leaves = leaves.filter(Ticket_No = Ticket_No,status = 2,from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).order_by('from_date')
-	name = get_object_or_404(CustomUser,Ticket_No = Ticket_No).Complete_Name
-	employee = get_object_or_404(CustomUser, Ticket_No = id)
-	quota = get_object_or_404(leavesDatabase,Ticket_No = id)
+	leaves = leaves.filter(email = email,status = 2,from_date__gte=(datetime.date.today() + datetime.timedelta(days=1))).order_by('from_date')
+	name = get_object_or_404(CustomUser,email = email).Complete_Name
+	# quota = get_object_or_404(leavesDatabase,email = email)
  
 	dataset = dict()
 	dataset['employee'] = employee
-	dataset['quota'] = quota
+	# dataset['quota'] = quota
 	dataset['title'] = 'profile - {0}'.format(employee.Complete_Name)
 	dataset['leave_list'] = leaves
 	dataset['name'] = name
-	dataset['ticket'] = Ticket_No
+	dataset['email'] = email
 
 	return render(request,'dashboard/employee_detail.html',dataset)
 
@@ -432,172 +565,43 @@ def personalrejected(request,id):
 # ------------------------------------Action on Leaves--------------------------------------
 
 def unapprove_leave(request,id):
-	if not (request.user.is_authenticated and (request.user.is_supervisor or request.user.is_shop_incharge)):
+	if not (request.user.is_authenticated and (request.user.is_hod or request.user.is_director)):
 		return redirect('/login')
 
 	leave = get_object_or_404(cumulativeLeavesDatabase, id = id)
-	Ticket_No = leave.Ticket_No
+	email = leave.email
 	
-	validate = get_object_or_404(leavesDatabase,Ticket_No = Ticket_No)
-	leaveType = leave.leave_type
-	duration = leave.leave_duration
-	fromDate = str(leave.from_date)
-	toDate = str(leave.to_date)
-	start_date = datetime.datetime.strptime(fromDate, '%Y-%m-%d').date()
-	end_date = datetime.datetime.strptime(toDate, '%Y-%m-%d').date()
-	holidays = holidayList.objects.filter(Q(date_today__gte=start_date,date_today__lte=end_date)).count()
-	if (duration == 'Second Half' or duration == 'First Half') and holidays:
-		holidays = 0.5
-	if(leaveType == 'CL( Casual Leave )'):				
-		validate.total_available_cl = validate.total_available_cl + leave.leave_days - holidays
-		validate.save()
-	elif(leaveType == 'PL( Privilege Leave )'):
-		validate.total_available_pl = validate.total_available_pl + leave.leave_days - holidays
-		validate.save()
-	else:
-		validate.total_available_sl = validate.total_available_sl + leave.leave_days - holidays
-		validate.save()
 	leave.reason = ''
 	leave.action_by = request.user.Complete_Name
 	leave.unapprove_leave
  
-	line = leave.Cost_Center_Name
-
-	while start_date <= end_date:
-		holi = holidayList.objects.filter(date_today = start_date)
-		if holi.count():
-			delapprovedLeavesDatabase.objects.filter(Ticket_No = Ticket_No,Cost_Center_Name = line,on_date = start_date).delete()
-		else:
-			approvedLeavesDatabase.objects.filter(Ticket_No = Ticket_No,Cost_Center_Name = line,on_date = start_date).delete()
-		start_date = start_date + datetime.timedelta(days=1)
- 
-	messages.warning(request,'Leave is now in Waiting list',extra_tags = 'alert alert-warning alert-dismissible fade show')
-	
 	return redirect('dashboard:leaveslist') 
 
 
 
 def approve_leave(request,id):
-	if not ((request.user.is_supervisor or request.user.is_shop_incharge) and request.user.is_authenticated):
+	if not ((request.user.is_hod or request.user.is_director) and request.user.is_authenticated):
 		return redirect('/login')
 	leave = get_object_or_404(cumulativeLeavesDatabase, id = id)
-	Ticket_No = leave.Ticket_No
-
-	validate = get_object_or_404(leavesDatabase,Ticket_No = Ticket_No)
-	leaveType = leave.leave_type
-	leave_duration = leave.leave_duration
-	
-	fromDate = str(leave.from_date)
-	toDate = str(leave.to_date)
-	start_date = datetime.datetime.strptime(fromDate, '%Y-%m-%d').date()
-	end_date = datetime.datetime.strptime(toDate, '%Y-%m-%d').date()
-	holidays = holidayList.objects.filter(Q(date_today__gte=start_date,date_today__lte=end_date)).count()
-	if (leave_duration == 'Second Half' or leave_duration == 'First Half') and holidays:
-		holidays = 0.5
-	if(leaveType == 'CL( Casual Leave )'):
-		if(leave.leave_days > validate.total_available_cl):
-			messages.warning(request,'Insufficient Leave Quota',extra_tags = 'alert alert-warning alert-dismissible fade show')
-			return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
-		else:
-			validate.total_available_cl = validate.total_available_cl - leave.leave_days + holidays
-			validate.save()
-	elif(leaveType == 'PL( Privilege Leave )'):
-		if(leave.leave_days > validate.total_available_pl):
-			messages.warning(request,'Insufficient Leave Quota',extra_tags = 'alert alert-warning alert-dismissible fade show')
-			return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
-		else:
-			validate.total_available_pl = validate.total_available_pl - leave.leave_days + holidays
-			validate.save()
-	else: 
-		if(leave.leave_days > validate.total_available_sl):
-			messages.warning(request,'Insufficient Leave Quota',extra_tags = 'alert alert-warning alert-dismissible fade show')
-			return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
-		else:
-			validate.total_available_sl = validate.total_available_sl - leave.leave_days + holidays
-			validate.save()
       
-	employee = get_object_or_404(CustomUser,Ticket_No = Ticket_No)
 	leave.reason = ''
 	Complete_Name = request.user.Complete_Name
 	leave.action_by = Complete_Name
 	leave.approve_leave
 	
-
-	while start_date <= end_date:
-		holi = holidayList.objects.filter(date_today = start_date)
-		if holi.count():
-			delapprovedLeavesDatabase.objects.get_or_create(
-                Ticket_No = Ticket_No,
-                Current_Shop = leave.Current_Shop,
-                Cost_Center_Name = leave.Cost_Center_Name,
-                leave_duration = leave.leave_duration,
-                leave_type = leave.leave_type,
-                on_date = start_date,
-                approved_on_date_time = timezone.now(),
-                approved_by = request.user.Complete_Name
-            )
-		else:
-			approvedLeavesDatabase.objects.get_or_create(
-				Ticket_No = Ticket_No,
-				Current_Shop = leave.Current_Shop,
-				Cost_Center_Name = leave.Cost_Center_Name,
-				leave_duration = leave_duration,
-				leave_type = leaveType,
-				on_date = start_date,
-				approved_on_date_time = timezone.now(),
-				approved_by = Complete_Name
-			)
-		start_date = start_date + datetime.timedelta(days=1)
- 
- 
- 
-	messages.success(request,'Leave successfully approved for {0}'.format(employee.Complete_Name),extra_tags = 'alert alert-success alert-dismissible fade show')
-
 	return redirect('dashboard:leaveslist')
 
 
 def reject_leave(request,id):
-	dataset = dict()
 	leave = get_object_or_404(cumulativeLeavesDatabase, id = id)
-	Ticket_No = leave.Ticket_No
 	reason = request.GET.get('reason')
-	validate = get_object_or_404(leavesDatabase,Ticket_No = Ticket_No)
 	leaveType = leave.leave_type
 	leave.reason = reason
 	leave.action_by = request.user.Complete_Name
-	duration = leave.leave_duration
-	fromDate = str(leave.from_date)
-	toDate = str(leave.to_date)
-	start_date = datetime.datetime.strptime(fromDate, '%Y-%m-%d').date()
-	end_date = datetime.datetime.strptime(toDate, '%Y-%m-%d').date()
- 
-	holidays = holidayList.objects.filter(Q(date_today__gte=start_date,date_today__lte=end_date)).count()
-	if (duration == 'Second Half' or duration == 'First Half') and holidays:
-		holidays = 0.5
-	if leave.status == 1 and leaveType == 'CL( Casual Leave )':	
-		validate.total_available_cl = validate.total_available_cl + leave.leave_days - holidays
-		validate.save()
-	elif leave.status == 1 and leaveType == 'PL( Privilege Leave )' :
-		validate.total_available_pl = validate.total_available_pl + leave.leave_days - holidays
-		validate.save()
-	elif leave.status == 1 and leaveType == 'SL( Sick Leave )' :
-		validate.total_available_sl = validate.total_available_sl + leave.leave_days - holidays
-		validate.save()
 	leave.reject_leave
  
 
-	line = leave.Cost_Center_Name
-	
-	while start_date <= end_date:
-		holi = holidayList.objects.filter(date_today = start_date)
-		if holi.count():
-			delapprovedLeavesDatabase.objects.filter(Ticket_No = Ticket_No,Cost_Center_Name = line,on_date = start_date).delete()
-		else:
-			approvedLeavesDatabase.objects.filter(Ticket_No = Ticket_No,Cost_Center_Name = line,on_date = start_date).delete()
-		start_date = start_date + datetime.timedelta(days=1)
-	
-	messages.warning(request,'Leave is rejected',extra_tags = 'alert alert-warning alert-dismissible fade show')
-	if request.user.is_shop_incharge:
+	if request.user.is_director:
 		x = 1
 	else:
 		x = 2
@@ -607,7 +611,7 @@ def reject_leave(request,id):
 
 
 def unreject_leave(request,id):
-	if not (request.user.is_supervisor or request.user.is_shop_incharge):
+	if not (request.user.is_hod or request.user.is_director):
 		return redirect('/logout')
 	leave = get_object_or_404(cumulativeLeavesDatabase, id = id)
 	leave.reason = ''

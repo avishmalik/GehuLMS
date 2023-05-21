@@ -84,7 +84,7 @@ WSGI_APPLICATION = "leave_management.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "LMS5",
+        "NAME": "gehuLMS",
         "USER": "postgres",
         "PASSWORD":"2010",
         "HOST":"localhost",

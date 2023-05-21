@@ -6,11 +6,11 @@ import datetime
 
 
 class leavesDatabase(models.Model):
-    Ticket_No = models.IntegerField(null=False)
+    email = models.EmailField(null=False)
     # card_no = models.CharField(max_length=100, null=False)
     Complete_Name = models.CharField(max_length=80)
-    Current_Shop = models.CharField(max_length=100, null=True)
-    Cost_Center_Name = models.CharField(max_length=100, null=True)
+    Department = models.CharField(max_length=100, null=True)
+    Role = models.CharField(max_length=100, null=True)
     total_assigned_pl = models.FloatField(default=0)
     total_assigned_cl = models.FloatField(default=0)
     total_assigned_sl = models.FloatField(default=0)
@@ -19,10 +19,10 @@ class leavesDatabase(models.Model):
     total_available_sl = models.FloatField(default=0)
 
 class cumulativeLeavesDatabase(models.Model):
-    Ticket_No = models.IntegerField(null=False)
+    email = models.EmailField(null=False)
     Complete_Name = models.CharField(max_length=80)
-    Current_Shop = models.CharField(max_length=100, null=True)
-    Cost_Center_Name = models.CharField(max_length=100, null=True)
+    Department = models.CharField(max_length=100, null=True)
+    Role = models.CharField(max_length=100, null=True)
     leave_type = models.CharField(max_length=100, null=False)
     leave_duration = models.CharField(max_length=100, null=False)
     from_date = models.DateField(auto_now=False,auto_now_add=False,null=False)
@@ -47,7 +47,7 @@ class cumulativeLeavesDatabase(models.Model):
         dates = 0
         if startdate > enddate:
             return 
-        if self.leave_duration == 'First Half' or self.leave_duration == 'Second Half':
+        if self.leave_duration == 'Half Day':
             dates = 0.5
             return dates
         else: 
@@ -96,9 +96,9 @@ class cumulativeLeavesDatabase(models.Model):
     
 
 class approvedLeavesDatabase(models.Model):
-    Ticket_No = models.IntegerField(null=False)
-    Current_Shop = models.CharField(max_length=100, null=False)
-    Cost_Center_Name = models.CharField(max_length=100, null=False)
+    email = models.EmailField(null=False)
+    Department = models.CharField(max_length=100, null=False)
+    Role = models.CharField(max_length=100, null=False)
     leave_duration = models.CharField(max_length=100, null=False)
     leave_type = models.CharField(max_length=100, null=False)
     on_date = models.DateField(auto_now=False, auto_now_add=False, null=False)
@@ -106,9 +106,9 @@ class approvedLeavesDatabase(models.Model):
     approved_by = models.CharField(max_length=100, null=True)
     
 class delapprovedLeavesDatabase(models.Model):
-    Ticket_No = models.IntegerField(null=False)
-    Current_Shop = models.CharField(max_length=100, null=False)
-    Cost_Center_Name = models.CharField(max_length=100, null=False)
+    email = models.EmailField(null=False)
+    Department = models.CharField(max_length=100, null=False)
+    Role = models.CharField(max_length=100, null=False)
     leave_duration = models.CharField(max_length=100, null=False)
     leave_type = models.CharField(max_length=100, null=False)
     on_date = models.DateField(auto_now=False, auto_now_add=False, null=False)
@@ -116,9 +116,9 @@ class delapprovedLeavesDatabase(models.Model):
     approved_by = models.CharField(max_length=100, null=True)
 
 class appliedLeavesDatabase(models.Model):
-    Ticket_No = models.IntegerField(null=False)
-    Current_Shop = models.CharField(max_length=100, null=False)
-    Cost_Center_Name = models.CharField(max_length=100, null=False)
+    email = models.EmailField(null=False)
+    Department = models.CharField(max_length=100, null=False)
+    Role = models.CharField(max_length=100, null=False)
     leave_duration = models.CharField(max_length=100, null=False)
     leave_type = models.CharField(max_length=100, null=False)
     on_date = models.DateField(auto_now=False, auto_now_add=False, null=False)
@@ -132,7 +132,7 @@ class holidayList(models.Model):
     
 class todays_attendance2(models.Model):
     sno = models.AutoField(primary_key=True)
-    Ticket_No = models.CharField(max_length=100, blank=True,db_index=True)
+    email = models.CharField(max_length=100, blank=True,db_index=True)
     p_time = models.CharField(max_length=100, blank=True)
     date_t = models.DateField(auto_now_add = False, auto_now=False,blank=True)
     submission = models.CharField(max_length=200, null=True)

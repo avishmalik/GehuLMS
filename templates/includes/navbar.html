@@ -1,26 +1,24 @@
 <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-      {% if request.user.is_shop_incharge %}
-      <a class="navbar-brand" href="{% url 'dashboard:dashboard' %}">M O R</a>
+      {% if request.user.is_director %}
+      <a class="navbar-brand" href="{% url 'dashboard:leaveslist' %}">GEHU</a>
       {% else %}
-      <a class="navbar-brand" href="/dashboard/">M O R</a>
+      <a class="navbar-brand" href="{% url 'dashboard:dashboard' %}">GEHU</a>
       {% endif %}
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
         <ul class="navbar-nav">
-          {% if request.user.is_shop_incharge %}
+          {% if request.user.is_hod %}
           <a class="nav-link" href="{% url 'dashboard:dashboard' %}">Home</a>
-          {% else %}
-          <a class="nav-link" href="/dashboard">Home</a>
           {% endif %}
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Leaves
             </a>
             <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
-              {% if request.user.is_supervisor or request.user.is_shop_incharge %}
+              {% if request.user.is_hod or request.user.is_director %}
               <li><a class="dropdown-item" href="{% url 'dashboard:leaveslist' %}">All Leaves</a></li>
               <li><a class="dropdown-item" href="{% url 'dashboard:pendingleaveslist' %}">Waiting Leaves</a></li>
               <li><a class="dropdown-item" href="{% url 'dashboard:approvedleaveslist' %}">Approved Leaves</a></li>
@@ -31,27 +29,30 @@
 
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Men On Roll
+              Staff Members
             </a>
             <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
-              {% if request.user.is_shop_incharge or request.user.is_supervisor %}
-              <li><a class="dropdown-item" href="{% url 'dashboard:employees' %}">Men On Roll</a></li>
+              {% if request.user.is_director or request.user.is_hod %}
+              <li><a class="dropdown-item" href="{% url 'dashboard:employees' %}">Staff Members</a></li>
               {% endif %}
-              <li><a class="dropdown-item" href="{% url 'LMS:register' %}">Create Man On Roll</a></li>
+              <li><a class="dropdown-item" href="{% url 'LMS:register' %}">Create Staff Member</a></li>
             </ul>
           </li>
+          {% if request.user.is_hod and request.path == '/dashboard/' %}
+          <a class="nav-link" href="" data-toggle="modal" data-target="#myModal">Apply Leave</a>
+          {% endif %}
         </ul>
 
         <!-- <div class="container-fluid">
-          <span class="navbar-brand mb-0 h1">{{request.user.Current_Shop}} - {{request.user.Cost_Center_Name}}</span>
+          <span class="navbar-brand mb-0 h1">{{request.user.Department}} - {{request.user.Role}}</span>
         </div> -->
       
         <div class="navbar-nav ms-auto">
           <span class="navbar-text text-white">
-            {% if request.user.is_shop_incharge %}
-              {{request.user.Ticket_No}}  ( Shop - {{request.user.Current_Shop}} )
-            {% elif request.user.is_supervisor %}
-            {{request.user.Ticket_No}}  ( {{request.user.Current_Shop}} - {{request.user.Cost_Center_Name}} )
+            {% if request.user.is_director %}
+              {{request.user.email}}  ( Director )
+            {% elif request.user.is_hod %}
+            {{request.user.email}}  ( {{request.user.Department}} - {{request.user.Role}} )
             {% endif %}
           </span>
           <span class="navbar-text text-white">

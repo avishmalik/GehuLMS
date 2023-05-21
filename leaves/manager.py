@@ -5,8 +5,8 @@ import datetime
 
 
 class LeaveManager(models.Manager):
-	# Current_Shop = request.user.Current_Shop
-	# Cost_Center_Name = request.user.Cost_Center_Name
+	# Department = request.user.Department
+	# Role = request.user.Role
     
 	def get_queryset(self):
 		'''

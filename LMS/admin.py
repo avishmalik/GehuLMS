@@ -14,21 +14,21 @@ class CustomUserAdmin(UserAdmin,ImportExportModelAdmin):
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
     model = CustomUser
-    list_display = ('Ticket_No','is_staff','Complete_Name','Current_Shop','Cost_Center_Name','is_mor','is_supervisor','is_shop_incharge')
-    list_filter = ('Ticket_No','is_staff','Complete_Name','Current_Shop','Cost_Center_Name','is_mor','is_supervisor','is_shop_incharge')
+    list_display = ('email','is_staff','Complete_Name','Department','Role','is_member','is_hod','is_director')
+    list_filter = ('email','is_staff','Complete_Name','Department','Role','is_member','is_hod','is_director')
     fieldsets = (
-        (None,{'fields': ('Ticket_No','password','Complete_Name','Current_Shop','Cost_Center_Name','is_mor','is_supervisor','is_shop_incharge')}),
+        (None,{'fields': ('email','password','Complete_Name','Department','Role','is_member','is_hod','is_director')}),
         ('Permissions', {'fields': ('is_staff','is_active',)}),
     )
     
     add_fieldsets = (
         (None,{
             'classes':('wide',),
-            'fields' : ('Ticket_No','password1','password2','is_staff','is_active','Complete_Name','Current_Shop','Cost_Center_Name','is_mor','is_supervisor','is_shop_incharge')}
+            'fields' : ('email','password1','password2','is_staff','is_active','Complete_Name','Department','Role','is_member','is_hod','is_director')}
         ),
     )
-    search_fields = ('Ticket_No','Complete_Name')
-    ordering = ('Ticket_No',)
+    search_fields = ('email','Complete_Name')
+    ordering = ('email',)
 
 
 
@@ -38,8 +38,8 @@ class CustomUserAdmin(UserAdmin,ImportExportModelAdmin):
 # class UserResource(resources.ModelResource):
 #     class Meta:
 #         model = CustomUser
-#         # fields = ('id','Ticket_No','Complete_Name','Current_Shop','Cost_Center_Name')
-#         list_display = ('id','Ticket_No','Complete_Name','Current_Shop','Cost_Center_Name')
+#         # fields = ('id','email','Complete_Name','Department','Role')
+#         list_display = ('id','email','Complete_Name','Department','Role')
 
 # class UserAdmin(ImportExportModelAdmin,UserAdmin):
 #     resource_class = UserResource
@@ -55,13 +55,13 @@ class CustomUserAdmin(UserAdmin,ImportExportModelAdmin):
 #         model = Person
 
 # class PersonAdmin(ImportExportModelAdmin):
-#     list_display = ('id','Ticket_No','Complete_Name','Current_Shop','Cost_Center_Name')
+#     list_display = ('id','email','Complete_Name','Department','Role')
 #     resource_class = PersonResource
 
 # admin.site.register(Person, PersonAdmin)
 
 # class SuperVAdmin(admin.ModelAdmin):
-#     list_display = ('Ticket_No','Complete_Name','Current_Shop','Cost_Center_Name')
+#     list_display = ('email','Complete_Name','Department','Role')
     
 # admin.site.register(SuperV,SuperVAdmin)
 

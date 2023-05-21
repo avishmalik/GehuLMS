@@ -5,8 +5,8 @@ from django import forms
 
  
 class LoginForm(forms.Form):
-    Ticket_No = forms.IntegerField(
-        widget = forms.NumberInput(
+    email = forms.EmailField(
+        widget = forms.EmailInput(
             attrs = {
                 "class" : "form-control",
             }
@@ -29,7 +29,7 @@ class UserShopAddForm(UserCreationForm):
 
 	class Meta:
 		model = CustomUser
-		fields = ['Ticket_No','Complete_Name','password1','password2','Cost_Center_Name','is_active']
+		fields = ['email','Complete_Name','password1','password2','Department','Role','is_active']
 		
 
 class UserSuperAddForm(UserCreationForm):
@@ -40,16 +40,16 @@ class UserSuperAddForm(UserCreationForm):
 
 	class Meta:
 		model = CustomUser
-		fields = ['Ticket_No','Complete_Name','password1','password2','is_active']
+		fields = ['email','Complete_Name','password1','Role','password2','is_active']
 		
 	
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = CustomUser
-        fields = ('Ticket_No',)
+        fields = ('email',)
         
 class CustomUserChangeForm(UserChangeForm):
     class Meta:
         model = CustomUser
-        fields = ('Ticket_No',)
+        fields = ('email',)

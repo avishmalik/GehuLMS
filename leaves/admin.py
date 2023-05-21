@@ -39,11 +39,11 @@ class holidayAdmin(ImportExportModelAdmin):
             x = delapprovedLeavesDatabase.objects.filter(on_date = date_today)
             for i in x:
                 id = i.id
-                Ticket_No = i.Ticket_No
+                email = i.email
                 leave_type = i.leave_type
                 leave_duration = i.leave_duration
                 temp = 0
-                mor = get_object_or_404(leavesDatabase,Ticket_No = Ticket_No)
+                mor = get_object_or_404(leavesDatabase,email = email)
                 
                 if leave_duration == 'First Half' or leave_duration == 'Second Half':
                     temp = 0.5
@@ -59,9 +59,9 @@ class holidayAdmin(ImportExportModelAdmin):
                 mor.save()
                 
                 approvedLeavesDatabase.objects.get_or_create(
-                    Ticket_No = Ticket_No,
-                    Current_Shop = mor.Current_Shop,
-                    Cost_Center_Name = mor.Cost_Center_Name,
+                    email = email,
+                    Department = mor.Department,
+                    Role = mor.Role,
                     leave_duration = leave_duration,
                     leave_type = leave_type,
                     on_date = i.on_date,
@@ -79,11 +79,11 @@ class holidayAdmin(ImportExportModelAdmin):
                 x = delapprovedLeavesDatabase.objects.filter(on_date = date_today)
                 for i in x:
                     id = i.id
-                    Ticket_No = i.Ticket_No
+                    email = i.email
                     leave_type = i.leave_type
                     leave_duration = i.leave_duration
                     temp = 0
-                    mor = get_object_or_404(leavesDatabase,Ticket_No = Ticket_No)
+                    mor = get_object_or_404(leavesDatabase,email = email)
                     
                     if leave_duration == 'First Half' or leave_duration == 'Second Half':
                         temp = 0.5
@@ -99,9 +99,9 @@ class holidayAdmin(ImportExportModelAdmin):
                     mor.save()
                     
                     approvedLeavesDatabase.objects.get_or_create(
-                        Ticket_No = Ticket_No,
-                        Current_Shop = mor.Current_Shop,
-                        Cost_Center_Name = mor.Cost_Center_Name,
+                        email = email,
+                        Department = mor.Department,
+                        Role = mor.Role,
                         leave_duration = leave_duration,
                         leave_type = leave_type,
                         on_date = i.on_date,
@@ -120,12 +120,12 @@ class holidayAdmin(ImportExportModelAdmin):
             x = approvedLeavesDatabase.objects.filter(on_date = date_today)
             for i in x:
                 id = i.id
-                Ticket_No = i.Ticket_No
+                email = i.email
                 leave_type = i.leave_type
                 leave_duration = i.leave_duration
                 on_date = i.on_date
                 temp = 0
-                mor = get_object_or_404(leavesDatabase,Ticket_No = Ticket_No)
+                mor = get_object_or_404(leavesDatabase,email = email)
                 
                 if leave_duration == 'First Half' or leave_duration == 'Second Half':
                     temp = 0.5
@@ -141,9 +141,9 @@ class holidayAdmin(ImportExportModelAdmin):
                 mor.save()
                 
                 delapprovedLeavesDatabase.objects.get_or_create(
-                    Ticket_No = Ticket_No,
-                    Current_Shop = mor.Current_Shop,
-                    Cost_Center_Name = mor.Cost_Center_Name,
+                    email = email,
+                    Department = mor.Department,
+                    Role = mor.Role,
                     leave_duration = leave_duration,
                     leave_type = leave_type,
                     on_date = on_date,
@@ -166,35 +166,35 @@ class leavesDatabaseResource(resources.ModelResource):
         model = leavesDatabase
 
 class leavesDatabaseAdmin(ImportExportModelAdmin):
-    list_display = ('Ticket_No','Complete_Name')
-    list_filter = ('Ticket_No','Complete_Name')
-    search_fields = ('Ticket_No','Complete_Name')
-    ordering = ('Ticket_No',)
+    list_display = ('email','Complete_Name')
+    list_filter = ('email','Complete_Name')
+    search_fields = ('email','Complete_Name')
+    ordering = ('email',)
     resource_class = leavesDatabaseResource
 
 admin.site.register(leavesDatabase, leavesDatabaseAdmin)
 
 class appliedLeavesAdmin(admin.ModelAdmin):
     model = appliedLeavesDatabase
-    list_display = ['id','Ticket_No','leave_duration','on_date']
+    list_display = ['id','email','leave_duration','on_date']
     
 admin.site.register(appliedLeavesDatabase, appliedLeavesAdmin)
 
 class approvedLeavesAdmin(admin.ModelAdmin):
     model = approvedLeavesDatabase
-    list_display = ['id','Ticket_No','leave_duration','on_date']
+    list_display = ['id','email','leave_duration','on_date']
     
 admin.site.register(approvedLeavesDatabase, approvedLeavesAdmin)
 
 class delapprovedLeavesAdmin(admin.ModelAdmin):
     model = delapprovedLeavesDatabase
-    list_display = ['id','Ticket_No','leave_duration','on_date']
+    list_display = ['id','email','leave_duration','on_date']
     
 admin.site.register(delapprovedLeavesDatabase, delapprovedLeavesAdmin)
 
 class cumulativeLeavesAdmin(admin.ModelAdmin):
     model = cumulativeLeavesDatabase
-    list_display = ['id','Ticket_No','Complete_Name','from_date','to_date','status']
+    list_display = ['id','email','Complete_Name','from_date','to_date','status']
     
 admin.site.register(cumulativeLeavesDatabase, cumulativeLeavesAdmin)
 

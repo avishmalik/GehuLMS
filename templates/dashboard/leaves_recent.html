@@ -178,20 +178,39 @@
                     </section>
 
                 	<!-- TABLE -->
+					{% if request.user.is_director %}
+								<div class="dropdown mt-3">
+									<button class="btn btn-outline-success dropdown-toggle" type="button" id="filter" data-bs-toggle="dropdown" aria-expanded="false">
+										{% if x == 'All' %}
+										All
+										{% elif x == 'HOD' %}
+										HODs
+										{% else %}
+										Staff
+										{% endif %}
+									</button>
+									<ul class="dropdown-menu dropdown-menu-dark" style="max-height: 280px;overflow-y: auto;" aria-labelledby="filter">
+									<li><a class="dropdown-item" href="{% url 'dashboard:leaveslistfilter' 'All' %}">All</a></li>
+									<li><a class="dropdown-item" href="{% url 'dashboard:leaveslistfilter' '0' %}">HODs</a></li>
+									<li><a class="dropdown-item" href="{% url 'dashboard:leaveslistfilter' '1' %}">Staff</a></li>
+									</ul>
+								</div>
+								
+								{% endif %}
                 	<div class="table-responsive table-shadow">
+						
                 		<div class="text-center table-description">
                 			<h4 class="title-h3" style="color: #60a0b3 !important;
-    						text-shadow: 1px 0px rgba(0,0,0,0.11)">ALL LEAVES</h4>
+    						text-shadow: 1px 0px rgba(0,0,0,0.11)">CURRENT LEAVES</h4>
                 		</div>
-                	
                 		<table class="table table-striped" id="tbl_exporttable_to_xls">
 							  <thead>
 							    <tr>
 							      <!-- <th scope="col">#</th> -->
-								  <th scope="col">Ticket No.</th>
+								  <!-- <th scope="col">Email</th> -->
 							      <th scope="col">Name</th>
-								  {% if request.user.is_shop_incharge %}
-								  <th scope="col">Line</th>
+								  {% if request.user.is_director %}
+								  <th scope="col">Role</th>
 								  {% endif %}	
 							      <th scope="col">Type</th>
 							      <th scope="col">Start Date</th>
@@ -203,15 +222,15 @@
 							  <tbody>
 							  	{% for leave in leave_list %}
 							    <tr>
-								  <td><a href = "{% url 'dashboard:employeeinfo' leave.Ticket_No %}">{{ leave.Ticket_No }}</a></td>
-							      <td>{{ leave.Complete_Name }}</td>
-								  {% if request.user.is_shop_incharge %}
-								  <td>{{ leave.Cost_Center_Name }}</td>
+								  <td><a href = "{% url 'dashboard:employeeinfo' leave.email %}">{{ leave.Complete_Name }}</a></td>
+							      <!-- <td>{{ leave.Complete_Name }}</td> -->
+								  {% if request.user.is_director %}
+								  <td>{{ leave.Role }}</td>
 								  {% endif %}	
-								  {% if leave.leave_type == 'SL( Sick Leave )' %}
-								  <td>SL</td>
-								  {% elif leave.leave_type == 'PL( Privilege Leave )'%}
-								  <td>PL</td>
+								  {% if leave.leave_type == 'Sick Leave' %}
+								  <td>Sick Leave</td>
+								  {% elif leave.leave_type == 'Standard Leave'%}
+								  <td>Standard Leave</td>
 								  {% else %}
 								  <td>CL</td>
 								  {% endif %}
@@ -253,6 +272,8 @@
 				  XLSX.writeFile(wb, fn || ('MySheetName.' + (type || 'xlsx')));
 			 }
 		</script>
+
+		
  {% endblock %}
 
 <script type="text/javascript">

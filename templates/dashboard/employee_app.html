@@ -176,19 +176,19 @@
                         </section>
                     </section>
 
-					{% if request.user.is_shop_incharge %}
+					{% if request.user.is_director %}
 								<div class="dropdown mt-3">
 									<button class="btn btn-outline-success dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
 										{% if line != 'x' %}
 										{{line}}
 										{% else %}
-										ALL LINES
+										All Departments
 										{% endif %}
 									</button>
 									<ul class="dropdown-menu dropdown-menu-dark" style="max-height: 280px;overflow-y: auto;" aria-labelledby="dropdownMenuButton1">
-									<li><a class="dropdown-item" href="{% url 'dashboard:employees' %}">ALL LINES</a></li>
+									<li><a class="dropdown-item" href="{% url 'dashboard:employees' %}">All Departments</a></li>
 									{% for line in lines %}
-									<li><a class="dropdown-item" href="{% url 'dashboard:employeesfilter' line.Ticket_No %}">{{line.Cost_Center_Name}}</a></li>
+									<li><a class="dropdown-item" href="{% url 'dashboard:employeesfilter' line.email %}">{{line.Department}}</a></li>
 									{% endfor %}
 									
 									</ul>
@@ -201,17 +201,15 @@
                 		<div class="text-center table-description">
                 			<h4 class="title-h3" style="color: #60a0b3 !important;
     						text-shadow: 1px 0px rgba(0,0,0,0.11)">
-							ALL MEN ON ROLL
+							ALL STAFF MEMBERS
 						</h4>
                 		</div>
 						
 						<div class="text-center table-description">
                 			<h6 class="title-h3" style="color: #026714 !important;
     						text-shadow: 1px 0px rgba(0,0,0,0.11)"> 
-							{% if request.user.is_shop_incharge %}
-								Shop - {{shop}}
-							{% elif request.user.is_supervisor %}
-								{{shop}} - {{line}}
+							{% if request.user.is_hod %}
+								{{shop}} Department
 							{% endif %}
 							</h6>
 
@@ -223,11 +221,11 @@
 								
 							    <tr>
 							      <!-- <th scope="col">#</th> -->
-							      <th scope="col">Ticket No.</th>
 							      <th scope="col">Name</th>
-								  {% if request.user.is_shop_incharge %}
-								  <th scope="col">Line</th>
+								  {% if request.user.is_director %}
+								  <th scope="col">Department</th>
 								  {% endif %}
+								  <th scope="col">Role</th>
 								  <th scope="col">Details</th>
 							    </tr>
 							  </thead>
@@ -235,13 +233,13 @@
 							  	{% for employee in employee_list %}
 							    <tr>
 
-									<td><a href = "{% url 'dashboard:employeeinfo' employee.Ticket_No %}">{{ employee.Ticket_No }}</a></td>
-							      <td>{{ employee.Complete_Name}}</td>
-								  {% if request.user.is_shop_incharge %}
-								  <td>{{ employee.Cost_Center_Name }}</td>
+									<td><a href = "{% url 'dashboard:employeeinfo' employee.email %}">{{ employee.Complete_Name }}</a></td>
+								  {% if request.user.is_director %}
+								  <td>{{ employee.Department }}</td>
 								  {% endif %}
+								  <td>{{ employee.Role}}</td>
 							      <td> 
-							      	<a href="{% url 'dashboard:employeeinfo' employee.Ticket_No %}">
+							      	<a href="{% url 'dashboard:employeeinfo' employee.email %}">
 										<span class = "btn btn-outline-primary btn-sm">VIEW</span>
 							      	</a>
 							      	

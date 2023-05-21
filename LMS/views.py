@@ -17,21 +17,21 @@ def login_view(request):
     msg = None
     if request.method == 'POST':
         if form.is_valid():
-            Ticket_No = form.cleaned_data.get('Ticket_No')
+            email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
-            user = authenticate(Ticket_No = Ticket_No,password=password)
+            user = authenticate(email = email,password=password)
             if user is not None and user.is_staff:
                 login(request,user)
                 return HttpResponseRedirect(reverse('admin:index'))
-            elif user is not None and user.is_mor:
+            elif user is not None and user.is_member:
                 login(request,user)
                 return redirect('leaves:searchLeavesData')
-            elif user is not None and (user.is_supervisor):
+            elif user is not None and (user.is_hod):
                 login(request,user)
                 return redirect('dashboard:dashboard')
-            elif user is not None and (user.is_shop_incharge):
+            elif user is not None and (user.is_director):
                 login(request,user)
-                return redirect('dashboard:dashboard')
+                return redirect('dashboard:leaveslist')
             else:
                 msg = 'Invalid Credentials'
         else:
@@ -42,11 +42,11 @@ def login_view(request):
 def register_user_view(request):
 	# WORK ON (MESSAGES AND UI) & extend with email field
     if request.method == 'POST':
-        if request.user.is_shop_incharge:
+        if request.user.is_director:
             form = UserShopAddForm(data = request.POST)
             if form.is_valid():
                 instance = form.save(commit = False)
-                instance.Current_Shop = request.user.Current_Shop
+                # instance.Department = request.user.Department
                 instance.save()
                 Complete_Name = form.cleaned_data.get("Complete_Name")
 
@@ -59,8 +59,8 @@ def register_user_view(request):
             form = UserSuperAddForm(data = request.POST)
             if form.is_valid():
                 instance = form.save(commit = False)
-                instance.Current_Shop = request.user.Current_Shop
-                instance.Cost_Center_Name = request.user.Cost_Center_Name
+                instance.Department = request.user.Department
+                # instance.Role = request.user.Role
                 instance.save()
                 Complete_Name = form.cleaned_data.get("Complete_Name")
 
@@ -70,7 +70,7 @@ def register_user_view(request):
                 messages.error(request,'Username or password is invalid',extra_tags = 'alert alert-warning alert-dismissible fade show')
                 return redirect('LMS:register')
             
-    if request.user.is_shop_incharge:
+    if request.user.is_director:
         form = UserShopAddForm()
     else:
         form = UserSuperAddForm()
@@ -111,5 +111,5 @@ def logout_view(request):
 def bluecollar(request):
     return render(request,'leaveDataDisplay.html')
 
-def supervisor(request):
+def hod(request):
     return render(request,'dashboard/dashboard_index.html')

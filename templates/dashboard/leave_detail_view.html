@@ -134,72 +134,63 @@ span{
                 </section>
                 
                     <section class="row">
+                      <section class="col-lg-12 col-md-12 col-sm-12 text-center space-margin">
+                        <h3 class="title-h3">Leave Details</h3>
+                    </section>
                         <section class="col-lg-12 col-md-12 col-sm-12 text-center space-margin">
-                            <h3 class="title-h3"><a href="{% url 'dashboard:employeeinfo' employee.Ticket_No %}">{{ employee.Complete_Name }}</a></h3>
+                            <h4 class="title-h3"><a href="{% url 'dashboard:employeeinfo' employee.email %}">{{ employee.Complete_Name }}</a></h4>
                         </section>
                     </section>
 
                     <table class="table table-striped">
                       <thead>
                         <tr>
-                          <th scope="col">Ticket No.</th>
-                          <th scope="col">Name</th>
+                          <th scope="col">Email</th>
+                          <th scope="'col">Name</th>
+                          <th scope="'col">Department</th>
                           <th scope="col">Line</th>
-                          <th scope="col">Start Date</th>
-                          <th scope="col">End Date</th>
-                          <th scope="col">Duration</th>
+                          <th scope="col">Type</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr>
-                          <th scope="row">{{ employee.Ticket_No }}</th>
+                          <th scope="row">{{ employee.email }}</th>
                           <td>{{ employee.Complete_Name }}</td>
-                          <td>{{ employee.Cost_Center_Name }}</td>
-                          <td>{{ leave.from_date }}</td>
-                          <td>{{ leave.to_date }}</td>
-                          <td>{{ leave.leave_days }} Days(s) {Holidays Included}</td>
+                          <td>{{ employee.Department }}</td>
+                          <td>{{ employee.Role }}</td>
+                          <td>{{leave.leave_type}}</td>
                         </tr>
                       </tbody>
                     </table>
                     <table class="table table-striped">
                       <thead>
                         <tr>
-                          <th scope="col">Type</th>
-                          {% if leave.leave_type == 'CL( Casual Leave )' %}
-                            <th scope="col">Casual Leave Quota</th>
-                          {% elif leave.leave_type == 'PL( Privilege Leave )' %}
-                            <th scope="col">Privilege Leave Quota</th>
-                          {% else %}
-                          <th scope="col">Sick Leave Quota</th>
-                          {% endif %}
-                          {% if leave.is_rejected %}
-                            <th scope="col">Reason</th>
-                          {% endif %}
+                          
+                          <th scope="col">Start Date</th>
+                          <th scope="col">End Date</th>
+                          <th scope="col">Duration</th>
                           {% if leave.status == 1 %}
                             <th scope="col">Approved By</th>
                           {% elif leave.status == 2 %}
                             <th scope="col">Rejected By</th>
+                          {% endif %}
+                          {% if leave.is_rejected %}
+                            <th scope="col">Reason</th>
                           {% endif %}
                           <th scope="col">Status</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr>
-                          <td>{{leave.leave_type}}</td>
-                          <td scope = "col">
-                          {% if leave.leave_type == 'CL( Casual Leave )' %}
-                           <div>{{ quota.total_available_cl}} / {{ quota.total_assigned_cl}}</div>
-                          {% elif leave.leave_type == 'PL( Privilege Leave )' %}
-                          <div>{{ quota.total_available_pl}} / {{ quota.total_assigned_pl}}</div>
-                          {%else%}
-                          <div>{{ quota.total_available_sl}} / {{ quota.total_assigned_sl}}</div>
-                          {% endif %}
-                          </td>
-                          {% if leave.is_rejected %}
-                            <td scope="col">{{leave.reason}}</td>
-                          {% endif %}
+                          
+                          <td>{{ leave.from_date }}</td>
+                          <td>{{ leave.to_date }}</td>
+                          <td>{{ leave.leave_days }} Days(s)</td>
                           {% if leave.status == 1 or leave.status == 2 %}
                             <td scope="col">{{leave.action_by}}</td>
+                          {% endif %}
+                          {% if leave.is_rejected %}
+                            <td scope="col">{{leave.reason}}</td>
                           {% endif %}
                           <td>
                             {% if leave.status == 0 %}
@@ -219,7 +210,7 @@ span{
                             <span style="font-size: 13px;padding-left: 1rem;" class="pull-left">Created - {{ leave.applied_on_date }}</span>
 
 
-                            {% if request.user.is_supervisor or request.user.is_shop_incharge %}
+                            {% if request.user.is_hod or request.user.is_director %}
 
                                   <section class="row pb-3">
                                     <section class="col col-lg-12 col-sm-12 col-lg-offset-12 text-center">

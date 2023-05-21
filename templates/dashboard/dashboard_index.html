@@ -1,8 +1,29 @@
-{% extends '_layout.html' %}
 
+{% extends '_layout.html' %}
+{% load static %}
 {% block title %} {{ title }} {% endblock %}
 
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<!--    <link rel="stylesheet" href="{% static '/bootstrap/css/bootstrap.min.css' %}"/>-->
+<!--    <script type="text/javascript" src="{% static '/bootstrap/js/bootstrap.min.js' %}"></script>-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+          integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+          <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{% static '/jquery/jquery-3.3.1.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.21/af-2.3.5/b-1.6.2/b-colvis-1.6.2/b-html5-1.6.2/b-print-1.6.2/cr-1.5.2/fc-3.3.1/fh-3.1.7/kt-2.5.2/r-2.2.5/rg-1.1.2/rr-1.2.7/sp-1.1.1/sl-1.3.1/datatables.min.css"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.21/af-2.3.5/b-1.6.2/b-colvis-1.6.2/b-html5-1.6.2/b-print-1.6.2/cr-1.5.2/fc-3.3.1/fh-3.1.7/kt-2.5.2/r-2.2.5/rg-1.1.2/rr-1.2.7/sp-1.1.1/sl-1.3.1/datatables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0/chartjs-plugin-datalabels.min.js" integrity="sha512-R/QOHLpV1Ggq22vfDAWYOaMd5RopHrJNMxi8/lJu8Oihwi4Ho4BRFeiMiCefn9rasajKjnx9/fTQ/xkWnkDACg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/1.0.2/chartjs-plugin-annotation.min.js" integrity="sha512-FuXN8O36qmtA+vRJyRoAxPcThh/1KJJp7WSRnjCpqA+13HYGrSWiyzrCHalCWi42L5qH1jt88lX5wy5JyFxhfQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script> -->
+
+
 
   {% block stylesheet %}
     
@@ -75,204 +96,573 @@
  <!--CONTENTS-->
  {% block content %}
     <body style="background-color:whitesmoke">
-        <section class="content">
-            <section class="container-fluid">
-
-            	<section class="row">
-            		{% if request.user.is_supervisor or request.user.is_shop_incharge %}
-            		<section class="col col-lg-6 text-center">
-            			<div class="employee-box sec-box">
-            				<a href="{% url 'dashboard:employees' %}">
-            				<span class = "btn w3-xxlarge btn-outline-primary">M O R <sub>({{num}})</sub></span>
-            				</a>
-            				<!-- <span class="count-object">{{ employees.count }}</span>  -->
-            			</div>
-            		</section>
-            		<section class="col col-lg-6 text-center">
-            			<div class="leave-box sec-box">
-            				<a href="{% url 'dashboard:leaveslist' %}">
-            				<span class = "btn w3-xxlarge btn-outline-success">Leaves</span>
-            				</a>
-                            <!-- <span class="count-object" style="color:#41b6d6;">{{ leaves.count }}</span>  -->
-            			</div>
-            		</section>
-                {% endif %}
-
-            	</section>
-              
-              
-                <div class="mt-5 pt-5">
-                <table class="table">
-                    <thead class = "table-dark ">
-                      {% if request.user.is_shop_incharge %}
-                      <div class="dropdown mb-4">
-                        <button class="btn btn-outline-danger dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                          {% if line != 'x' %}
-                            {{line}}
-                            {% else %}
-                            ALL LINES
-                            {% endif %}
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-dark" style="max-height: 280px;overflow-y: auto;" aria-labelledby="dropdownMenuButton1">
-                          <li><a class="dropdown-item" href="{% url 'dashboard:dashboard' %}">ALL LINES</a></li>
-                          {% for line in lines %}
-                          <li><a class="dropdown-item" href="{% url 'dashboard:linedashboard' line.Ticket_No %}">{{line.Cost_Center_Name}}</a></li>
-                          {% endfor %}
-                          
-                        </ul>
-                        <section class="row" style="text-align:center">
-                          <section class="col col-lg-12">
-                            {% if line != 'x' %}
-                            <span style="color:rgb(0, 53, 81);font-size:1.8em" >{{line}}</span>
-                            {% else %}
-                            <span style="color:rgb(0, 53, 81);font-size:1.8em">ALL LINES</span>
-                            {% endif %}
-                          </section>
-                          </section>
-                        </section>
-                      </div>
-                      
-                      {% endif %}
-                      {% if request.user.is_supervisor %}
-                      <section class="row" style="text-align:center">
-                        <section class="col col-lg-12 mb-3">
-                          <span style="color:rgb(0, 53, 81);font-size:1.8em" >{{request.user.Current_Shop}} - {{request.user.Cost_Center_Name}}</span>
-                        </section>
-                        </section>
-                      </section>
-                      {% endif %}
-                      <tr>
-                        <th scope="col">Status</th>
-                        {% for date in date_list %}
-                        <th scope="col">{{ date }}</th>
-                        {% endfor %}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr class="table-success">
-                        <th scope="row">Approved</th>
-                        {% for approve in approved_list %}
-                        {% if approve == 'HOLIDAY' %}
-                        <td style="background-color:rgb(239, 104, 104)">{{approve}}</td>
-                        {% else %}
-                        <td>{{approve}}</td>
-                        {% endif %}
-                        {% endfor %}
-                      </tr>
-                      <tr class="table" style="background-color:rgb(135, 168, 235)">
-                        <th scope="row">Absenteeism</th>
-
-                        {% if mp1.0 == 'HOLIDAY' %}
-                        <td style="background-color:rgb(245, 153, 153)">{{mp2.0}}</td>
-                        {% else %}
-                        <td>
-                          <div class="progress">
-                            <div id="leave1" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%"></div>
-                          </div>
-                          <p>{{day1}}%</p>
-                        </td>
-                        {% endif %}
-                        {% if mp1.1 == 'HOLIDAY' %}
-                        <td style="background-color:rgb(245, 153, 153)">{{mp2.1}}</td>
-                        {% else %}
-                        <td>
-                          <div class="progress">
-                            <div id="leave2" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%"></div>
-                          </div>
-                          <p>{{day2}}%</p>
-                        </td>
-                        {% endif %}
-                        {% if mp1.2 == 'HOLIDAY' %}
-                        <td style="background-color:rgb(245, 153, 153)">{{mp2.2}}</td>
-                        {% else %}
-                        <td>
-                          <div class="progress">
-                            <div id="leave3" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%"></div>
-                          </div>
-                          <p>{{day3}}%</p>
-                        </td>
-                        {% endif %}
-                        {% if mp1.3 == 'HOLIDAY' %}
-                        <td style="background-color:rgb(245, 153, 153)">{{mp2.3}}</td>
-                        {% else %}
-                        <td>
-                          <div class="progress">
-                            <div id="leave4" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%"></div>
-                          </div>
-                          <p>{{day4}}%</p>
-                        </td>
-                        {% endif %}
-                        {% if mp1.4 == 'HOLIDAY' %}
-                        <td style="background-color:rgb(245, 153, 153)">{{mp2.4}}</td>
-                        {% else %}
-                        <td>
-                          <div class="progress">
-                            <div id="leave5" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%"></div>
-                          </div>
-                          <p>{{day5}}%</p>
-                        </td>
-                        {% endif %}
-                        {% if mp1.5 == 'HOLIDAY' %}
-                        <td style="background-color:rgb(245, 153, 153)">{{mp2.5}}</td>
-                        {% else %}
-                        <td>
-                          <div class="progress">
-                            <div id="leave6" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%"></div>
-                          </div>
-                          <p>{{day6}}%</p>
-                        </td>
-                        {% endif %}
-                        {% if mp1.6 == 'HOLIDAY' %}
-                        <td style="background-color:rgb(245, 153, 153)">{{mp2.6}}</td>
-                        {% else %}
-                        <td>
-                          <div class="progress">
-                            <div id="leave7" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%"></div>
-                          </div>
-                          <p>{{day7}}%</p>
-                        </td>
-                        {% endif %}
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-            </section> <!-- /container -->   
-            <script>
-              var a = '{{day1}}';
-              var temp1 = a + '%';
-              var b = '{{day2}}';
-              var temp2 = b + '%';
-              var c = '{{day3}}';
-              var temp3 = c + '%';
-              var d = '{{day4}}';
-              var temp4 = d + '%';
-              var e = '{{day5}}';
-              var temp5 = e + '%';
-              var f = '{{day6}}';
-              var temp6 = f + '%';
-              var g = '{{day7}}';
-              var temp7 = g + '%';
+      {% if request.user.is_hod %}
             
-              $(document).ready(function() {
-                $('#leave1').css('width',temp1);
-                $('#leave1').attr('aria-valuenow',a);
-                $('#leave2').css('width',temp2);
-                $('#leave2').attr('aria-valuenow',b);
-                $('#leave3').css('width',temp3);
-                $('#leave3').attr('aria-valuenow',c);
-                $('#leave4').css('width',temp4);
-                $('#leave4').attr('aria-valuenow',d);
-                $('#leave5').css('width',temp5);
-                $('#leave5').attr('aria-valuenow',e);
-                $('#leave6').css('width',temp6);
-                $('#leave6').attr('aria-valuenow',f);
-                $('#leave7').css('width',temp7);
-                $('#leave7').attr('aria-valuenow',g);
-              });
+      
+      <!-- <a class="nav-link" href="{% url 'dashboard:dashboard' %}">Apply Leave</a> -->
+      <div class="modal" id="myModal">
+        <div class="modal-dialog model-lg" style="max-width: 35% !important;">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Apply Leave</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div class="d-flex flex-column" >
+                        <select class="form-control-sm mb-2" id="leaveType">
+                            <option value="" selected disabled>Select leave type</option>
+                            <option value="Standard Leave">Standard Leave</option>
+                            <!-- <option value="CL( Casual Leave )">CL( Casual Leave )</option> -->
+                            <option value="Sick Leave">Sick Leave</option>
+                        </select>
+
+                        <select class="form-control-sm mb-2" id="leaveDuration">
+                            <option value="Full Day" selected>Full Day</option>
+                            <option value="Half Day">Half Day</option>
+                            <!-- <option value="Second Half">Second Half</option> -->
+                        </select>
+                        <div class="mb-2 row">
+                            <div class="col-4">
+                                From Date :
+                            </div>
+                            <input class="form-group col-md-4" min="{{date_check|safe}}" id="from_date" type="date">
+                        </div>
+                        <div class="mb-2 row">
+                            <div class="col-4">
+                                To Date :
+                            </div>
+                            <input class="form-group col-md-4" id="to_date" type="date">
+                        </div>
+                        
+                        <div class="alert alert-danger" style="display:None;" role="alert" id="validationAlert">
+
+                        </div>
+                        <div class="alert alert-success" style="display:None;" role="alert" id="validationSuccess">
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button class="btn btn-primary" type="button" id="applyLeaveButton" onclick="validateLeaves()">Check Availability</button>
+                    <button type="button" class="btn btn-danger" onclick="closeModal()" data-dismiss="modal" aria-label="Close">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="wrapper ">
+      <div class="main-panel">
+  
+        
+        <div class="content">
+          <div class="container-fluid">
+            
+            <div class="row justify-content-center pb-3">
+              <!-- <section class="col col-lg-12 col-sm-12 col-lg-offset-12 text-end"></section>
+            <span><button class="btn btn-primary" data-toggle="modal" data-target="#myModal">Apply Leave</button></span>
+          </section> -->
+            <div class="col-md-8 col-lg-8">
+              <div class="card">
+              <div class="card-header card-header-text card-header-warning">
+              <div class="card-text">
+              <h4 class="card-title">Upcoming Holidays</h4>
+              </div>
+              </div>
+              <div class="card-body table-responsive table-striped">
+                <div class="table ">
+                <div class="table-wrapper">
+              <table class="table table-striped">
+              <thead class="text-primary">
+              <tr><th>Holiday Name</th>
+              <th>Day</th>
+              <th>Date</th>
+              </tr></thead>
+              <tbody>
+              {% for holiday in holidays %}
+              <tr>
+                  <td>{{holiday.type_of_holiday}}</td>
+                  <td>{{ holiday.date_today|date:"l" }}</td>
+                  <td>{{holiday.date_today}}</td>
+              
+              </tr>
+              {% endfor %}
+              
+              </tbody>
+              </table>
+              </div>
+            </div>
+            </div>
+              </div>
+              </div>
+            </div>
+            <h2 class="text-center">My Leaves</h2>
+                      <div class="center-c2 pb-3">
+                          <div class="col-md-12">
+                            
+                            <div class="card">
+                              <div class="card-header card-header-primary">
+                                <div class="row">
+                                  <h4 class="card-title text-center">Leave History
+                                    <!-- <form action="/"> -->
+                                      
+                                        <input class = "text-end btn btn-warning select" id="monthSelector" type="month" min="{{min_month}}" max="{{max_month}}" value="{{current_month_name}}">
+                                    <!-- </form> -->
+                                    <!-- <form action="/"> -->
+                                      <select class = "text-end btn btn-warning select" id="leaveTypeSelect" class="form-control-sm">
+                                        <option value="All">All Leave Type</option>
+                                        <option value="Standard Leave">Standard Leave</option>
+                                        <option value="Sick Leave">Sick Leave</option>
+                                      </select>
+                                    <!-- </form> -->
+                                    <!-- <form action="/"> -->
+                                      <select class = "text-end btn btn-warning select" id="statusSelect" class="form-control-sm">
+                                        <option value="All">All Status</option>
+                                        <option value="0">Waiting</option>
+                                        <option value="1">Approved</option>
+                                        <option value="2">Rejected</option>
+                                      </select>
+                                    <!-- </form> -->
+                                  </h4>
+                                </div>
+                                
+                              </div>
+                              <div class="card-body">
+                                <div class="table-responsive table-striped">
+                                  <table class="table table-striped" id="userTable">
+                                    <thead class=" text-primary">
+                                      <th>
+                                        Leave Type
+                                      </th>
+                                      <th>
+                                        From
+                                      </th>
+                                      <th>
+                                        To
+                                      </th>
+                                      <th>
+                                        Status
+                                      </th>
+                                      <th>
+                                        Action By
+                                      </th>
+                                      <th>
+                                        Reason
+                                      </th>
+                                    </thead>
+                                    <tbody>
+                                      {% for leave in leave_list %}
+                                      <tr>
+                                        <td>
+                                          {{leave.leave_type}}
+                                        </td>
+                                        <td>
+                                          {{leave.from_date|safe}}
+                                        </td>
+                                        <td>
+                                          {{leave.to_date|safe}}
+                                        </td>
+                                        <!-- <td> -->
+                                          {% if leave.status == 0 %}
+                                          <td><a href="#" class="btn btn-warning btn-sm disabled" role="button" aria-disabled="true">Waiting</a></td>
+                                          {% elif leave.status == 1 %}
+                                          <td><a href="#" class="btn btn-success btn-sm disabled" role="button" aria-disabled="true">Approved</a></td>
+                                          {% else %}
+                                          <td><a href="#" class="btn btn-danger btn-sm disabled" role="button" aria-disabled="true">Rejected</a></td>
+                                          {% endif %}
+                                        <!-- </td> -->
+                                        <td>
+                                          {{leave.action_by|safe}}
+                                        </td>
+                                        <td >
+                                          {{leave.reason|safe}}
+                                        </td>
+                                      </tr>
+                                      {% endfor %}
+                                      
+                                    </tbody>
+                                  </table>
+                              </div>
+                              </div>
+                            </div>
+                          </div>
+
+  
+          </div>
+        </div>
+  
+      </div>
+    </div>
+
+
+    <!-- <button class="btn btn-sm btn-success m-1 increaseShadow" data-toggle="modal" data-target="#myModal"><i
+      class="fa fa-plus"></i> Apply Leave
+  </button> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  {% endif %}
+
+        
+
+            {% include 'includes/scripts.html' %}
+            <script>
+              
+            
+              $("#statusSelect").change(function(){
+                var status = $(this).val();
+                var leaveType = $("#leaveTypeSelect  option:selected").val();
+                var month = $("#monthSelector").val();
+                $.ajax({
+                    url:'{% url "leaves:statusSelect" %}',
+                    data:{
+                       "month":month,
+                        "status":status,
+                        "leaveType":leaveType
+                    },
+                    success:function(data){
+                        updateLeaveListTable(data['data_list']);
+                    }
+                });
+            });
+        
+            $("#leaveTypeSelect").change(function(){
+                var status = $("#statusSelect option:selected").val();
+                var leaveType = $(this).val();
+                var month = $("#monthSelector").val();
+                $.ajax({
+                    url:'{% url "leaves:leaveTypeSelect" %}',
+                    data:{
+                       "month":month,
+                        "status":status,
+                        "leaveType":leaveType
+                    },
+                    success:function(data){
+                        updateLeaveListTable(data['data_list']);
+                    }
+                });
+            });
+        
+        
+            $("#monthSelector").change(function(){
+                var month = $(this).val();
+                var status = $("#statusSelect option:selected").val();
+                var leaveType = $("#leaveTypeSelect  option:selected").val();
+                $.ajax({
+                    url:'{% url "leaves:monthDataFilter" %}',
+                    data:{
+                        "month":month,
+                        "status":status,
+                        "leaveType":leaveType
+                    },
+                    success:function(data){
+                        updateLeaveListTable(data['data_list']);
+                    }
+                });
+            });
+        
+        
+            function updateLeaveListTable(data_list){
+                $("#userTable tbody").empty();
+                for(index=0;index<data_list.length;index++){
+                    if(data_list[index].status === 0){
+                        var status = "<td><a href='#' class='btn btn-warning btn-sm disabled' role='button' aria-disabled='true'>Waiting</a></td>";
+                    }else if(data_list[index].status === 1){
+                        var status = "<td><a href='#' class='btn btn-success btn-sm disabled' role='button' aria-disabled='true'>Approved</a></td>";
+                    }else{
+                        var status = "<td><a href='#' class='btn btn-danger btn-sm disabled' role='button' aria-disabled='true'>Rejected</a></td>";
+                    }
+                    var row = $("<tr>")
+                    .append("<td>"+ data_list[index].leave_type +"</td>")
+                    .append("<td>"+ data_list[index].from_date +"</td>")
+                    .append("<td>"+ data_list[index].to_date +"</td>")
+                    .append(status)
+                    .append("<td>"+ data_list[index].action_by +"</td>")
+                    .append("<td>"+ data_list[index].reason +"</td>");
+                    
+                    $("#userTable tbody").append(row);
+                }
+            }
+        
+        
+            $(".calendar-table tbody td").click(function(e){
+                console.log($(this).data('ptime'),e.pageY,e,$(document).height(),Math.max(e.pageY + 50, $(document).height()));
+                $(".image-wrapper").remove();
+                var top = (e.pageY + 40).toString() + 'px';
+                var left = (e.pageX).toString() + 'px';
+                if(e.pageY + 40 > $(document).height()){
+                    top = (e.pageY-40).toString() + 'px';
+                }
+                var pTime = "";
+                if($(this).data('ptime')){
+                    pTime = $(this).data('ptime');
+                }
+                var div = $('<div class="image-wrapper">')
+                    .css({
+                        "left": left,
+                        "top": top,
+                        "border":'1px solid black',
+                        "font-size":Math.floor($(document).height()/50).toString()+'px',
+                        "padding":"2px",
+                        "background-color":$(this).data('color'),
+                        "padding":'10px'
+                    })
+                    .text($(this).attr("name")+" "+pTime)
+                    .appendTo(document.body);
+        
+                setTimeout(function() {
+                    div.addClass('fade-out');
+                    setTimeout(function() { div.remove(); }, 1000);
+                }, 1000);
+            });
+        
+        
+        
+            
+        
+        
+            $("#leaveType").change(function(){
+                var leaveType = $(this).val();
+                if((leaveType.localeCompare('Standard Leave') == 0)){
+                    var from_date = $("#from_date").val();
+                    var to_date = $("#to_date").val();
+                    if(to_date){
+                        $("#to_date").val(from_date);
+                        $("#to_date").attr("max",from_date);
+                    }
+                }else{
+                    $("#to_date").attr("max","");
+                }
+                $("#validationTable tbody").empty();
+                $("#validationAlert").css("display","None");
+                $("#validationSuccess").css("display","None");
+                $("#applyLeaveButton").text('Validate Leaves');
+                $("#applyLeaveButton").removeClass('btn-success');
+                $("#applyLeaveButton").addClass('btn-primary');
+                $("#applyLeaveButton").attr('onclick','validateLeaves()');
+                $("#validationAlert").text('');
+                $("#validationAlert").css("display","None");
+                $("#validationSuccess").text('');
+                $("#validationSuccess").css("display","None");
+            });
+        
+        
+            function closeModal(){
+                $("#myModal").modal().hide();
+                $("#leaveDuration").val('Full Day');
+                $("#leaveType").val('');
+                $("#from_date").val('');
+                $("#to_date").val('');
+                $("#to_date").attr('','');
+                $("#validationTable tbody").empty();
+                $("#validationAlert").css("display","None");
+                $("#validationSuccess").css("display","None");
+                $("#applyLeaveButton").text('Validate Leaves');
+                $("#applyLeaveButton").removeClass('btn-success');
+                $("#applyLeaveButton").addClass('btn-primary');
+                $("#applyLeaveButton").attr('onclick','validateLeaves()');
+            }
+        
+        
+        
+            $("#leaveDuration").change(function(){
+                var leaveDuration = $(this).val();
+                if((leaveDuration.localeCompare('Half Day') == 0)){
+                    var from_date = $("#from_date").val();
+                    var to_date = $("#to_date").val();
+                    if(to_date){
+                        $("#to_date").val(from_date);
+                        $("#to_date").attr("max",from_date);
+                    }
+                }else{
+                    $("#to_date").attr("max","");
+                }
+                $("#validationTable tbody").empty();
+                $("#validationAlert").css("display","None");
+                $("#validationSuccess").css("display","None");
+                $("#applyLeaveButton").text('Validate Leaves');
+                $("#applyLeaveButton").removeClass('btn-success');
+                $("#applyLeaveButton").addClass('btn-primary');
+                $("#applyLeaveButton").attr('onclick','validateLeaves()');
+                $("#validationAlert").text('');
+                $("#validationAlert").css("display","None");
+                $("#validationSuccess").text('');
+                $("#validationSuccess").css("display","None");
+            });
+        
+        
+            function validateLeaves(){
+                var leaveType = $("#leaveType option:selected").val();
+                var leaveDuration = $("#leaveDuration option:selected").val();
+                var fromDate = $("#from_date").val();
+                var toDate = $("#to_date").val();
+                if(leaveType && leaveDuration && fromDate && toDate){
+                    $.ajax({
+                        url:"{% url 'leaves:validateLeaves' %}",
+                        data:{
+                            "leaveType":leaveType,
+                            "leaveDuration":leaveDuration,
+                            "fromDate":fromDate,
+                            "toDate":toDate
+                        },
+                        success:function(data){
+                            console.log(data['availableQuota'].localeCompare("1"))
+                            if(data['planned'].localeCompare("1") == 0){
+                                $("#validationAlert").text('Please select a different date range, as leave has already been applied on some dates in the selected range!');
+                                $("#validationAlert").css("display","");
+                            }else if(data['availableQuota'].localeCompare("1") == 0){
+                                console.log(123);
+                                $("#validationAlert").text('You cannot apply for more than 1 Standard leave in a month.');
+                                $("#validationAlert").css("display","");
+                            }else{
+                                $("#applyLeaveButton").text('Apply Leave');
+                                $("#applyLeaveButton").removeClass('btn-primary');
+                                $("#applyLeaveButton").addClass('btn-success');
+                                $("#applyLeaveButton").attr('onclick','applyLeaves()');
+                                $("#validationAlert").text('');
+                                $("#validationAlert").css("display","None");
+                                $("#validationSuccess").text('');
+                                $("#validationSuccess").css("display","None");
+                                $("#applyLeaveButton").attr("data-dismiss","modal");
+                                $("#applyLeaveButton").attr("aria-label","Close");
+                                for(index=0;index<data['date_list'].length;index++){
+                                    var row = $("<tr>").append("<td>"+ data['date_list'][index].date +"</td>").append("<td>"+ data['date_list'][index].status +"</td>").append("<td>"+ data['date_list'][index].waiting +"</td>");
+                                    if(data['date_list'][index].highlight.localeCompare('0') == 0){
+                                        row.addClass('table-danger');
+                                    }else{
+                                        row.addClass('table-success');
+                                    }
+                                    $("#validationSuccess").text('Leave Dates Validated Successfully!');
+                                    $("#validationSuccess").css("display","");
+                                }
+                            }
+                        }
+                    });
+                }else{
+                    if(!leaveType){
+                        $("#validationAlert").text('Please select a leave type!');
+                        $("#validationAlert").css("display","");
+                    }else if(!fromDate){
+                        $("#validationAlert").text('Please select a from date!');
+                        $("#validationAlert").css("display","");
+                    }else if(!toDate){
+                        $("#validationAlert").text('Please select a to date!');
+                        $("#validationAlert").css("display","");
+                    }
+                }
+            }
+        
+            
+        
+            function applyLeaves(){
+                var leaveType = $("#leaveType option:selected").val();
+                var leaveDuration = $("#leaveDuration option:selected").val();
+                var fromDate = $("#from_date").val();
+                var toDate = $("#to_date").val();
+                if(leaveType && leaveDuration && fromDate && toDate){
+                    $.ajax({
+                        url:"{% url 'leaves:applyLeavesData' %}",
+                        data:{
+                            "leaveType":leaveType,
+                            "leaveDuration":leaveDuration,
+                            "fromDate":fromDate,
+                            "toDate":toDate
+                        },
+                        success:function(data){
+                            var row = $("<tr>")
+                            .append("<td>"+ leaveType +"</td>")
+                            .append("<td>"+ fromDate +"</td>")
+                            .append("<td>"+ toDate +"</td>")
+                            .append("<td><a href='#' class='btn btn-warning btn-sm disabled' role='button' aria-disabled='true'>Waiting</a></td>")
+                            .append("<td>" +"</td>")
+                            .append("<td>" +"</td>");
+                            $("#userTable tbody").append(row);
+                            closeModal();
+                        }
+                    });
+                }
+            }
+        
+            $("#from_date").keyup(function(){
+                var t = $(this).val();
+                if(t<"{{date_check|safe}}"){
+                    $("#from_date").val("{{date_check|safe}}");
+                }
+                $("#to_date").attr("min",t);
+                $("#to_date").removeAttr("disabled");
+                var leaveDuration = $("#leaveDuration option:selected").val();
+                var leaveType = $("#leaveType option:selected").val();
+                if((leaveDuration.localeCompare('Half Day') == 0) || (leaveType.localeCompare('Standard Leave') == 0)){
+                    var from_date = $("#from_date").val();
+                    $("#to_date").val(from_date);
+                    $("#to_date").attr("max",from_date);
+                }else{
+                    $("#to_date").attr("max","");
+                }
+        
+            });
+        
+            $("#to_date").change(function(){
+                $("#validationTable tbody").empty();
+                $("#applyLeaveButton").text('Validate Leaves');
+                $("#applyLeaveButton").removeClass('btn-success');
+                $("#applyLeaveButton").addClass('btn-primary');
+                $("#applyLeaveButton").attr('onclick','validateLeaves()');
+                $("#validationAlert").text('');
+                $("#validationAlert").css("display","None");
+                $("#validationSuccess").text('');
+                $("#validationSuccess").css("display","None");
+            });
+        
+        
+             $("#from_date").change(function(){
+                var t = $(this).val();
+                $("#to_date").attr("min",t);
+                var leaveDuration = $("#leaveDuration option:selected").val();
+                var leaveType = $("#leaveType option:selected").val();
+                if((leaveDuration.localeCompare('Half Day') == 0) || (leaveType.localeCompare('Standard Leave') == 0)){
+                    var from_date = $("#from_date").val();
+                    $("#to_date").val(from_date);
+                    $("#to_date").attr("max",from_date);
+                }else{
+                    $("#to_date").attr("max","");
+                }
+                $("#validationTable tbody").empty();
+                $("#applyLeaveButton").text('Validate Leaves');
+                $("#applyLeaveButton").removeClass('btn-success');
+                $("#applyLeaveButton").addClass('btn-primary');
+                $("#applyLeaveButton").attr('onclick','validateLeaves()');
+                $("#validationAlert").text('');
+                $("#validationAlert").css("display","None");
+                $("#validationSuccess").text('');
+                $("#validationSuccess").css("display","None");
+            });
+
             </script> 
         </section>
-        <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
-
     </body>
  {% endblock %}
 

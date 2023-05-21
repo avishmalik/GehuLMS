@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
+import environ
 import mimetypes
 mimetypes.add_type("text/css", ".css", True)
 
@@ -81,17 +83,23 @@ WSGI_APPLICATION = "leave_management.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "gehuLMS",
-        "USER": "postgres",
-        "PASSWORD":"2010",
-        "HOST":"localhost",
-        "PORT" : "5433",
-    }
-}
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": "gehuLMS",
+#         "USER": "postgres",
+#         "PASSWORD":"2010",
+#         "HOST":"localhost",
+#         "PORT" : "5433",
+#     }
+# }
 
+env = environ.Env()
+environ.Env.read_env()
+
+DATABASES = {
+    "default": dj_database_url.parse('postgres://gehudb_user:8ThUo8nB5ppcpc0jKdK5wgcTuSYSUIJO@dpg-chl1bre7avj2178q0f4g-a.oregon-postgres.render.com/gehudb')
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
